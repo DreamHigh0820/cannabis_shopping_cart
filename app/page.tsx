@@ -1,0 +1,380 @@
+"use client"
+
+import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Leaf, ShoppingCart, MessageCircle, Star } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useCart } from "@/lib/cart-context"
+
+export default function HomePage() {
+  const [featuredProducts, setFeaturedProducts] = useState([])
+  const [blogPosts, setBlogPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [notification, setNotification] = useState<string | null>(null)
+
+  const { state: cartState, dispatch: cartDispatch } = useCart()
+
+  const addToCart = (product: any) => {
+    cartDispatch({
+      type: "ADD_ITEM",
+      payload: {
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+        thc: product.thc,
+        cbd: product.cbd,
+      },
+    })
+
+    setNotification(`${product.name} added to cart!`)
+    setTimeout(() => setNotification(null), 3000)
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch featured products
+        const productsResponse = await fetch("/api/products")
+        const allProducts = await productsResponse.json()
+        const featured = allProducts.filter((product) => product.featured).slice(0, 4)
+        setFeaturedProducts(featured)
+
+        // Fetch featured blog posts
+        const blogResponse = await fetch("/api/blog")
+        const allPosts = await blogResponse.json()
+        const featuredPosts = allPosts.filter((post) => post.featured).slice(0, 3)
+        setBlogPosts(featuredPosts)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-2">
+              <Leaf className="h-8 w-8 text-green-600" />
+              <span className="text-2xl font-bold text-gray-900">DoughBoy</span>
+            </Link>
+            <nav className="hidden md:flex space-x-8">
+              <Link href="/" className="text-gray-900 hover:text-green-600 font-medium">
+                Home
+              </Link>
+              <Link href="/menu" className="text-gray-700 hover:text-green-600">
+                Menu
+              </Link>
+              <Link href="/blog" className="text-gray-700 hover:text-green-600">
+                Blog
+              </Link>
+              <Link href="/about" className="text-gray-700 hover:text-green-600">
+                About
+              </Link>
+              <Link href="/contact" className="text-gray-700 hover:text-green-600">
+                Contact
+              </Link>
+            </nav>
+            <div className="flex items-center space-x-3">
+              <Link href="/cart">
+                <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Cart ({cartState.totalItems})
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Contact
+                </Button>
+              </Link>
+              {/* Mobile menu button */}
+              <Button variant="ghost" size="sm" className="md:hidden">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Notification */}
+      {notification && (
+        <div className="fixed top-20 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right">
+          {notification}
+        </div>
+      )}
+
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                Premium Cannabis
+                <br />
+                <span className="text-green-200">Delivered Fresh</span>
+              </h1>
+              <p className="text-xl mb-8 text-green-100">
+                Experience the finest selection of flowers, vapes, edibles, and extracts. Quality guaranteed,
+                satisfaction delivered.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/menu">
+                  <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
+                    Shop Now
+                  </Button>
+                </Link>
+                <Link href="/menu">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-white hover:bg-white hover:text-green-600 bg-transparent"
+                  >
+                    View Menu
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <Image
+                src="/images/hero-cannabis.png"
+                alt="Premium Cannabis Products"
+                width={400}
+                height={400}
+                className="rounded-lg shadow-2xl"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Categories */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-12">Shop by Category</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { name: "Flowers", icon: "🌸", description: "Premium indoor & outdoor strains" },
+              { name: "Vapes", icon: "💨", description: "Cartridges & disposable pens" },
+              { name: "Edibles", icon: "🍯", description: "Gummies, chocolates & more" },
+              { name: "Extracts", icon: "💎", description: "Concentrates & live rosin" },
+            ].map((category) => (
+              <Link href={`/menu?category=${category.name.toLowerCase()}`} key={category.name}>
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
+                  <CardHeader className="text-center">
+                    <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{category.icon}</div>
+                    <CardTitle className="text-xl">{category.name}</CardTitle>
+                    <CardDescription>{category.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Featured Products</h2>
+            <p className="text-gray-600">Hand-picked favorites from our premium collection</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product, index) => (
+              <Card key={product.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="p-0">
+                  <Image
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    width={400}
+                    height={400}
+                    className="w-full h-48 object-cover rounded-t-lg"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    priority={index < 4} // Load first 4 images with priority
+                  />
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <Badge variant="secondary" className="mb-2">
+                      {product.category}
+                    </Badge>
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
+                    </div>
+                  </div>
+                  <h3 className="font-semibold mb-2">{product.name}</h3>
+                  <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-2xl font-bold text-green-600">${product.price}</span>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}>
+                      Add to Cart
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Latest from Our Blog</h2>
+            <p className="text-gray-600">Stay informed with the latest cannabis news and education</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {blogPosts.map((post) => (
+              <Card key={post.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="p-0">
+                  <Image
+                    src={post.image || "/placeholder.svg"}
+                    alt={post.title}
+                    width={250}
+                    height={150}
+                    className="w-full h-40 object-cover rounded-t-lg"
+                  />
+                </CardHeader>
+                <CardContent className="p-4">
+                  <div className="text-sm text-gray-500 mb-2">{post.date}</div>
+                  <h3 className="font-semibold mb-2">{post.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
+                  <Link href={`/blog/${post.id}`} className="text-green-600 hover:text-green-700 font-medium">
+                    Read More →
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/blog">
+              <Button variant="outline" size="lg">
+                View All Posts
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <Link href="/" className="flex items-center space-x-2 mb-4">
+                <Leaf className="h-6 w-6 text-green-400" />
+                <span className="text-xl font-bold">DoughBoy</span>
+              </Link>
+              <p className="text-gray-400">
+                Your trusted source for premium cannabis products. Quality guaranteed, satisfaction delivered.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Products</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/menu?category=flowers" className="hover:text-white">
+                    Flowers
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/menu?category=vapes" className="hover:text-white">
+                    Vapes
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/menu?category=edibles" className="hover:text-white">
+                    Edibles
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/menu?category=extracts" className="hover:text-white">
+                    Extracts
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>
+                  <Link href="/about" className="hover:text-white">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blog" className="hover:text-white">
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-white">
+                    Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy" className="hover:text-white">
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Contact</h4>
+              <div className="space-y-2 text-gray-400">
+                <p>Email: info@doughboy.com</p>
+                <p>Phone: (555) 123-4567</p>
+                <p>Telegram: @doughboy_official</p>
+              </div>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+            <p>&copy; 2024 DoughBoy. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+
+      {/* Floating Cart Summary */}
+      {cartState.totalItems > 0 && (
+        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-semibold">Cart Summary</span>
+            <span className="text-green-600 font-bold">${cartState.totalPrice.toFixed(2)}</span>
+          </div>
+          <p className="text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
+          <Link href="/cart">
+            <Button className="w-full bg-green-600 hover:bg-green-700">View Cart</Button>
+          </Link>
+        </div>
+      )}
+    </div>
+  )
+}

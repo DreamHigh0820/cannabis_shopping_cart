@@ -131,50 +131,6 @@
 
 //   return (
 //     <div className="min-h-screen bg-gray-50">
-//       {/* Header */}
-//       <header className="bg-white shadow-sm border-b">
-//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//           <div className="flex justify-between items-center h-16">
-//             <div className="flex items-center space-x-2">
-//               <Leaf className="h-8 w-8 text-green-600" />
-//               <Link href="/" className="text-2xl font-bold text-gray-900">
-//                 DoughBoy
-//               </Link>
-//             </div>
-//             <nav className="hidden md:flex space-x-8">
-//               <Link href="/" className="text-gray-700 hover:text-green-600">
-//                 Home
-//               </Link>
-//               <Link href="/menu" className="text-gray-700 hover:text-green-600">
-//                 Menu
-//               </Link>
-//               <Link href="/blog" className="text-gray-700 hover:text-green-600">
-//                 Blog
-//               </Link>
-//               <Link href="/about" className="text-gray-700 hover:text-green-600">
-//                 About
-//               </Link>
-//               <Link href="/contact" className="text-gray-700 hover:text-green-600">
-//                 Contact
-//               </Link>
-//             </nav>
-//             <div className="flex items-center space-x-3">
-//               <Link href="/cart">
-//                 <Button variant="outline" size="sm">
-//                   <ArrowLeft className="h-4 w-4 mr-2" />
-//                   Back to Cart
-//                 </Button>
-//               </Link>
-//               <Link href="/contact">
-//                 <Button size="sm" className="bg-green-600 hover:bg-green-700">
-//                   <MessageCircle className="h-4 w-4 mr-2" />
-//                   Contact
-//                 </Button>
-//               </Link>
-//             </div>
-//           </div>
-//         </div>
-//       </header>
 
 //       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 //         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
@@ -397,7 +353,8 @@ export default function CheckoutPage() {
           <CardContent className="text-center py-12">
             <h2 className="text-2xl font-semibold text-gray-600 mb-2">Your cart is empty</h2>
             <p className="text-gray-500 mb-6">Add some products before checkout!</p>
-            <Link href="/menu">
+            {/* <Link href="/menu"> */}
+            <Link href="/">
               <Button className="bg-green-600 hover:bg-green-700">Browse Products</Button>
             </Link>
           </CardContent>
@@ -471,51 +428,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <Link href="/" className="text-2xl font-bold text-gray-900">
-                DoughBoy
-              </Link>
-            </div>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-green-600">
-                Home
-              </Link>
-              <Link href="/menu" className="text-gray-700 hover:text-green-600">
-                Menu
-              </Link>
-              <Link href="/blog" className="text-gray-700 hover:text-green-600">
-                Blog
-              </Link>
-              <Link href="/about" className="text-gray-700 hover:text-green-600">
-                About
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-green-600">
-                Contact
-              </Link>
-            </nav>
-            <div className="flex items-center space-x-3">
-              <Link href="/cart">
-                <Button variant="outline" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Cart
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Contact
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
 

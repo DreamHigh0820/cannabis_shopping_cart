@@ -28,57 +28,6 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <Link href="/" className="text-2xl font-bold text-gray-900">
-                DoughBoy
-              </Link>
-            </div>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-green-600">
-                Home
-              </Link>
-              <Link href="/menu" className="text-gray-700 hover:text-green-600">
-                Menu
-              </Link>
-              <Link href="/blog" className="text-gray-700 hover:text-green-600">
-                Blog
-              </Link>
-              <Link href="/about" className="text-gray-700 hover:text-green-600">
-                About
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-green-600">
-                Contact
-              </Link>
-            </nav>
-            <div className="flex items-center space-x-3">
-              <Link href="/cart">
-                <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Cart ({cartState.totalItems})
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Contact
-                </Button>
-              </Link>
-              {/* Mobile menu button */}
-              <Button variant="ghost" size="sm" className="md:hidden">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <div className="mb-6">
@@ -98,7 +47,8 @@ export default function CartPage() {
               <ShoppingCart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h2 className="text-2xl font-semibold text-gray-600 mb-2">Your cart is empty</h2>
               <p className="text-gray-500 mb-6">Add some products to get started!</p>
-              <Link href="/menu">
+              {/* <Link href="/menu"> */}
+              <Link href="/">
                 <Button className="bg-green-600 hover:bg-green-700">Browse Products</Button>
               </Link>
             </CardContent>

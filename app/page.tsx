@@ -73,55 +73,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center space-x-2">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <span className="text-2xl font-bold text-gray-900">DoughBoy</span>
-            </Link>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-900 hover:text-green-600 font-medium">
-                Home
-              </Link>
-              <Link href="/menu" className="text-gray-700 hover:text-green-600">
-                Menu
-              </Link>
-              <Link href="/blog" className="text-gray-700 hover:text-green-600">
-                Blog
-              </Link>
-              <Link href="/about" className="text-gray-700 hover:text-green-600">
-                About
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-green-600">
-                Contact
-              </Link>
-            </nav>
-            <div className="flex items-center space-x-3">
-              <Link href="/cart">
-                <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Cart ({cartState.totalItems})
-                </Button>
-              </Link>
-              <Link href="/contact">
-                <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Contact
-                </Button>
-              </Link>
-              {/* Mobile menu button */}
-              <Button variant="ghost" size="sm" className="md:hidden">
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Notification */}
       {notification && (
         <div className="fixed top-20 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right">
@@ -144,12 +95,14 @@ export default function HomePage() {
                 satisfaction delivered.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/menu">
+                {/* <Link href="/menu"> */}
+                <Link href="/">
                   <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
                     Shop Now
                   </Button>
                 </Link>
-                <Link href="/menu">
+                {/* <Link href="/menu"> */}
+                <Link href="/">
                   <Button
                     size="lg"
                     variant="outline"
@@ -162,7 +115,8 @@ export default function HomePage() {
             </div>
             <div className="relative">
               <Image
-                src="/images/hero-cannabis.png"
+                // src="/placeholder.svg"
+                src="https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"
                 alt="Premium Cannabis Products"
                 width={400}
                 height={400}
@@ -184,7 +138,8 @@ export default function HomePage() {
               { name: "Edibles", icon: "🍯", description: "Gummies, chocolates & more" },
               { name: "Extracts", icon: "💎", description: "Concentrates & live rosin" },
             ].map((category) => (
-              <Link href={`/menu?category=${category.name.toLowerCase()}`} key={category.name}>
+              // <Link href={`/menu?category=${category.name.toLowerCase()}`} key={category.name}>
+              <Link href={`/`} key={category.name}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardHeader className="text-center">
                     <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{category.icon}</div>
@@ -210,7 +165,9 @@ export default function HomePage() {
               <Card key={product.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
-                    src={product.image || "/placeholder.svg"}
+                    // src={product.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+
                     alt={product.name}
                     width={400}
                     height={400}
@@ -233,7 +190,8 @@ export default function HomePage() {
                   <p className="text-sm text-gray-600 mb-3">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-green-600">${product.price}</span>
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}>
+                    {/* <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}> */}
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
                       Add to Cart
                     </Button>
                   </div>
@@ -256,7 +214,8 @@ export default function HomePage() {
               <Card key={post.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
-                    src={post.image || "/placeholder.svg"}
+                    // src={post.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                     alt={post.title}
                     width={250}
                     height={150}
@@ -267,7 +226,8 @@ export default function HomePage() {
                   <div className="text-sm text-gray-500 mb-2">{post.date}</div>
                   <h3 className="font-semibold mb-2">{post.title}</h3>
                   <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
-                  <Link href={`/blog/${post.id}`} className="text-green-600 hover:text-green-700 font-medium">
+                  {/* <Link href={`/blog/${post.id}`} className="text-green-600 hover:text-green-700 font-medium"> */}
+                  <Link href={`/`} className="text-green-600 hover:text-green-700 font-medium">
                     Read More →
                   </Link>
                 </CardContent>
@@ -275,93 +235,16 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-8">
-            <Link href="/blog">
-              <Button variant="outline" size="lg">
+            {/* <Link href="/blog"> */}
+            <Link href="/">
+            <Button variant="outline" size="lg">
                 View All Posts
               </Button>
             </Link>
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <Link href="/" className="flex items-center space-x-2 mb-4">
-                <Leaf className="h-6 w-6 text-green-400" />
-                <span className="text-xl font-bold">DoughBoy</span>
-              </Link>
-              <p className="text-gray-400">
-                Your trusted source for premium cannabis products. Quality guaranteed, satisfaction delivered.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Products</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/menu?category=flowers" className="hover:text-white">
-                    Flowers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/menu?category=vapes" className="hover:text-white">
-                    Vapes
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/menu?category=edibles" className="hover:text-white">
-                    Edibles
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/menu?category=extracts" className="hover:text-white">
-                    Extracts
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <Link href="/about" className="hover:text-white">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/blog" className="hover:text-white">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="hover:text-white">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/privacy" className="hover:text-white">
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <div className="space-y-2 text-gray-400">
-                <p>Email: info@doughboy.com</p>
-                <p>Phone: (555) 123-4567</p>
-                <p>Telegram: @doughboy_official</p>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 DoughBoy. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-
+y
       {/* Floating Cart Summary */}
       {cartState.totalItems > 0 && (
         <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50">

@@ -95,14 +95,12 @@ export default function HomePage() {
                 satisfaction delivered.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                {/* <Link href="/menu"> */}
-                <Link href="/">
+                <Link href="/menu">
                   <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
                     Shop Now
                   </Button>
                 </Link>
-                {/* <Link href="/menu"> */}
-                <Link href="/">
+                <Link href="/menu">
                   <Button
                     size="lg"
                     variant="outline"
@@ -138,8 +136,7 @@ export default function HomePage() {
               { name: "Edibles", icon: "🍯", description: "Gummies, chocolates & more" },
               { name: "Extracts", icon: "💎", description: "Concentrates & live rosin" },
             ].map((category) => (
-              // <Link href={`/menu?category=${category.name.toLowerCase()}`} key={category.name}>
-              <Link href={`/`} key={category.name}>
+              <Link href={`/menu?category=${category.name.toLowerCase()}`} key={category.name}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardHeader className="text-center">
                     <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{category.icon}</div>
@@ -190,8 +187,7 @@ export default function HomePage() {
                   <p className="text-sm text-gray-600 mb-3">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-green-600">${product.price}</span>
-                    {/* <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}> */}
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}>
                       Add to Cart
                     </Button>
                   </div>
@@ -244,16 +240,17 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-y
+
       {/* Floating Cart Summary */}
       {cartState.totalItems > 0 && (
         <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 gap-x-1">
             <span className="font-semibold">Cart Summary</span>
             <span className="text-green-600 font-bold">${cartState.totalPrice.toFixed(2)}</span>
           </div>
           <p className="text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
-          <Link href="/cart">
+          {/* <Link href="/cart"> */}
+          <Link href="">
             <Button className="w-full bg-green-600 hover:bg-green-700">View Cart</Button>
           </Link>
         </div>

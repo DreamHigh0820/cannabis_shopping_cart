@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Leaf, ShoppingCart, MessageCircle, ExternalLink } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
@@ -48,18 +49,25 @@ export default function Header() {
   // Regular store header
   return (
     <header className="bg-white shadow-sm border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <Leaf className="h-8 w-8 text-green-600" />
-            <span className="text-2xl font-bold text-gray-900">DoughBoy</span>
+            {/* <Leaf className="h-8 w-8 text-green-600" />
+            <span className="text-2xl font-bold text-gray-900">DoughBoy</span> */}
+            <Image
+              // src="/placeholder.svg"
+              src="/logo.png"
+              alt="DoughBoy logo"
+              width={200}
+              height={100}
+              className="rounded-lg shadow-2xl"
+            />
           </Link>
           <nav className="hidden md:flex space-x-8">
             <Link href="/" className="text-gray-900 hover:text-green-600 font-medium">
               Home
             </Link>
-            {/* <Link href="/menu" className="text-gray-700 hover:text-green-600"> */}
-            <Link href="/" className="text-gray-700 hover:text-green-600">
+            <Link href="/menu" className="text-gray-700 hover:text-green-600">
               Menu
             </Link>
             {/* <Link href="/blog" className="text-gray-700 hover:text-green-600"> */}
@@ -76,7 +84,8 @@ export default function Header() {
             </Link>
           </nav>
           <div className="flex items-center space-x-3">
-            <Link href="/cart">
+            {/* <Link href="/cart"> */}
+            <Link href="">
               <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Cart ({cartState.totalItems})

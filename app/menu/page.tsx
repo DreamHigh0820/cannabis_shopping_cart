@@ -199,7 +199,8 @@ export default function MenuPage() {
               <Card key={product.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
-                    src={product.image || "/placeholder.svg"}
+                    // src={product.image || "/placeholder.svg"}
+                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                     alt={product.name}
                     width={200}
                     height={200}
@@ -282,12 +283,13 @@ export default function MenuPage() {
 
         {cartState.totalItems > 0 && (
           <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-2 gap-x-1">
               <span className="font-semibold">Cart Summary</span>
               <span className="text-green-600 font-bold">${cartState.totalPrice.toFixed(2)}</span>
             </div>
             <p className="text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
-            <Link href="/cart">
+            {/* <Link href="/cart"> */}
+            <Link href="">
               <Button className="w-full bg-green-600 hover:bg-green-700">View Cart</Button>
             </Link>
           </div>

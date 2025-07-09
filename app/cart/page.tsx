@@ -66,7 +66,8 @@ export default function CartPage() {
                     {cartState.items.map((item) => (
                       <div key={item.id} className="flex items-center space-x-4 p-4 border rounded-lg">
                         <Image
-                          src={item.image || "/placeholder.svg"}
+                          // src={item.image || "/placeholder.svg"}
+                          src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                           alt={item.name}
                           width={80}
                           height={80}
@@ -140,8 +141,9 @@ export default function CartPage() {
                       <span className="text-green-600">${total.toFixed(2)}</span>
                     </div>
                   </div>
-                  <div className="mt-6 space-y-3">
-                    <Link href="/checkout">
+                  <div className="flex flex-col mt-6 space-y-1">
+                    {/* <Link href="/checkout"> */}
+                    <Link href="">
                       <Button className="w-full bg-green-600 hover:bg-green-700">Proceed to Checkout</Button>
                     </Link>
                     <Link href="/menu">

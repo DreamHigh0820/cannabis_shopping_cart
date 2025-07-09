@@ -288,8 +288,7 @@ export default function MenuPage() {
               <span className="text-green-600 font-bold">${cartState.totalPrice.toFixed(2)}</span>
             </div>
             <p className="text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
-            {/* <Link href="/cart"> */}
-            <Link href="">
+            <Link href="/cart">
               <Button className="w-full bg-green-600 hover:bg-green-700">View Cart</Button>
             </Link>
           </div>

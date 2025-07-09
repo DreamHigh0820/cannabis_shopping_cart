@@ -84,8 +84,7 @@ export default function Header() {
             </Link>
           </nav>
           <div className="flex items-center space-x-3">
-            {/* <Link href="/cart"> */}
-            <Link href="">
+            <Link href="/cart">
               <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Cart ({cartState.totalItems})

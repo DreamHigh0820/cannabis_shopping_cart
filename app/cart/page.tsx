@@ -23,7 +23,7 @@ export default function CartPage() {
     cartDispatch({ type: "REMOVE_ITEM", payload: { id } })
   }
 
-  const deliveryFee = cartState.totalPrice > 0 ? 10 : 0
+  const deliveryFee = cartState.totalPrice > 0 ? 100 : 0
   const total = cartState.totalPrice + deliveryFee
 
   return (

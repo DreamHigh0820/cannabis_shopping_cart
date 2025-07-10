@@ -20,14 +20,17 @@ export default function Header() {
   if (isAdminPage) {
     return (
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
-              <Leaf className="h-8 w-8 text-green-600" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">DoughBoy Admin</h1>
-                <p className="text-sm text-gray-500">Administration Dashboard</p>
-              </div>
+              <Image
+                // src="/placeholder.svg"
+                src="/logo.png"
+                alt="DoughBoy logo"
+                width={200}
+                height={100}
+                className="rounded-lg shadow-2xl"
+              />
             </div>
             <div className="flex items-center space-x-3">
               <Link href="/">
@@ -71,15 +74,13 @@ export default function Header() {
               Menu
             </Link>
             {/* <Link href="/blog" className="text-gray-700 hover:text-green-600"> */}
-            <Link href="/" className="text-gray-700 hover:text-green-600">
+            <Link href="" className="text-gray-700 hover:text-green-600">
               Blog
             </Link>
-            {/* <Link href="/about" className="text-gray-700 hover:text-green-600"> */}
-            <Link href="/" className="text-gray-700 hover:text-green-600">
+            <Link href="/about" className="text-gray-700 hover:text-green-600">
               About
             </Link>
-            {/* <Link href="/contact" className="text-gray-700 hover:text-green-600"> */}
-            <Link href="/" className="text-gray-700 hover:text-green-600">
+            <Link href="/contact" className="text-gray-700 hover:text-green-600">
               Contact
             </Link>
           </nav>

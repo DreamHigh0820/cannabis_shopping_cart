@@ -85,7 +85,7 @@ export default function AboutPage() {
             </div>
             <div>
               <Image
-                src="/images/about-story.png"
+                src="/placeholder.svg"
                 alt="Our Story"
                 width={600}
                 height={400}
@@ -131,7 +131,8 @@ export default function AboutPage() {
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <Image
-                    src={member.image || "/placeholder.svg"}
+                    // src={member.image || "/placeholder.svg"}
+                    src={"/placeholder-user.jpg"}
                     alt={member.name}
                     width={200}
                     height={200}

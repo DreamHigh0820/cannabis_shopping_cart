@@ -1,10 +1,9 @@
 import type React from "react"
-import "./globals.css"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import "./globals.css"
+import { AgeVerificationModal } from "@/components/ui/age-verification-modal"
 import { CartProvider } from "@/lib/cart-context"
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
+import { Inter } from "next/font/google"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,9 +22,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <CartProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <AgeVerificationModal />
+          {children}
         </CartProvider>
       </body>
     </html>

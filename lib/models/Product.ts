@@ -1,19 +1,18 @@
 export interface Product {
   _id?: string
   id: number
+  code: string // e.g., XXYY##
   name: string
-  category: string
+  category: "flowers" | "vapes" | "edibles" | "extracts" | "pound"
   price: number
+  quantity: number // Stock quantity
   image: string
-  rating: number
   description: string
-  thc: string
-  cbd: string
-  strain?: string
+  nose: string
+  strain: string
+  cost?: number // Admin-only field
   featured?: boolean
-  inStock?: boolean
-  createdAt?: Date
-  updatedAt?: Date
+  // Removed thc and cbd
 }
 
 export interface BlogPost {

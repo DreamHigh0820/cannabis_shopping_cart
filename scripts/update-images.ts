@@ -1,11 +1,11 @@
 import { getDatabase } from "@/lib/mongodb"
 
 const imageMapping = {
-  "/images/purple-haze.png": "/images/purple-haze-new.jpg",
-  "/images/og-kush.png": "/images/og-kush-new.jpg",
-  "/images/blue-dream-cart.png": "/images/blue-dream-cart-new.jpg",
-  "/images/gummy-bears.png": "/images/gummy-bears-new.jpg",
-  "/images/live-rosin.png": "/images/live-rosin-new.jpg",
+  "/images/purple-haze.png": "/images/purple-haze-new.png",
+  "/images/og-kush.png": "/images/og-kush-new.png",
+  "/images/blue-dream-cart.png": "/images/blue-dream-cart-new.png",
+  "/images/gummy-bears.png": "/images/gummy-bears-new.png",
+  "/images/live-rosin.png": "/images/live-rosin-new.png",
   // Add more mappings as needed
 }
 

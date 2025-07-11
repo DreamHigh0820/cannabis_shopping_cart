@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import BackButton from "../../../components/BackButton"
 
 export default function TelegramAdminPage() {
   const [loading, setLoading] = useState(false)
@@ -82,6 +83,7 @@ export default function TelegramAdminPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-4xl mx-auto space-y-8">
+        <BackButton />
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Telegram Admin Dashboard</h1>
           <p className="text-gray-600">Manage Telegram notifications and messages</p>
@@ -163,12 +165,6 @@ export default function TelegramAdminPage() {
             </div>
           </CardContent>
         </Card>
-
-        <div className="text-center">
-          <a href="/" className="text-green-600 hover:text-green-700">
-            ← Back to Home
-          </a>
-        </div>
       </div>
     </div>
   )

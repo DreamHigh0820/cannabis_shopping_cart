@@ -6,8 +6,10 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { Leaf, Calendar, User, ArrowLeft, Share2, ShoppingCart, MessageCircle } from "lucide-react"
+import { Calendar, User, ArrowLeft, Share2 } from "lucide-react"
 import type { BlogPost } from "@/lib/models/Product"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 export default function BlogPostPage({ params }: { params: { id: string } }) {
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null)
@@ -68,6 +70,9 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <Header variant="public" />
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Link href="/blog">
@@ -165,6 +170,9 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

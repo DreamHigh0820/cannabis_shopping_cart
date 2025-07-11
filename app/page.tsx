@@ -5,9 +5,11 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Leaf, ShoppingCart, MessageCircle, Star } from "lucide-react"
+import { Leaf, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([])
@@ -73,6 +75,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+      {/* Header */}
+      <Header variant="public" />
+
       {/* Notification */}
       {notification && (
         <div className="fixed top-20 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right">
@@ -233,7 +238,7 @@ export default function HomePage() {
           <div className="text-center mt-8">
             {/* <Link href="/blog"> */}
             <Link href="/">
-            <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg">
                 View All Posts
               </Button>
             </Link>
@@ -254,6 +259,9 @@ export default function HomePage() {
           </Link>
         </div>
       )}
+
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

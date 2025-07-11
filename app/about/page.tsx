@@ -2,7 +2,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Leaf, Shield, Clock, Heart, Users, ShoppingCart, MessageCircle } from "lucide-react"
+import { Shield, Clock, Heart, Users } from "lucide-react"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 export default function AboutPage() {
   const values = [
@@ -51,6 +53,9 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <Header variant="public" />
+
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -195,6 +200,9 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

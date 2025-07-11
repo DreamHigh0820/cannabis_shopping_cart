@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Leaf, ShoppingCart, MessageCircle, Star, Plus, Minus, Filter } from "lucide-react"
+import { Star, Plus, Minus, Filter } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 interface Product {
   id: number
@@ -124,6 +126,9 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <Header variant="public" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Menu</h1>
@@ -294,6 +299,8 @@ export default function MenuPage() {
           </div>
         )}
       </div>
+            {/* Footer */}
+            <Footer variant="public" />
     </div>
   )
 }

@@ -6,7 +6,9 @@ import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Leaf, Calendar, User, ArrowRight, ShoppingCart, MessageCircle } from "lucide-react"
+import { Calendar, User, ArrowRight } from "lucide-react"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState("All")
@@ -60,6 +62,9 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <Header variant="public" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Cannabis Blog</h1>
@@ -71,9 +76,8 @@ export default function BlogPage() {
             <Badge
               key={category}
               variant={category === selectedCategory ? "default" : "outline"}
-              className={`cursor-pointer hover:bg-green-100 ${
-                category === selectedCategory ? "bg-green-600 hover:bg-green-700" : ""
-              }`}
+              className={`cursor-pointer hover:bg-green-100 ${category === selectedCategory ? "bg-green-600 hover:bg-green-700" : ""
+                }`}
               onClick={() => handleCategoryChange(category)}
             >
               {category}
@@ -97,7 +101,8 @@ export default function BlogPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="lg:order-2">
                 <Image
-                  src={displayedPosts[0].image || "/placeholder.svg"}
+                  // src={displayedPosts[0].image || "/placeholder.svg"}
+                  src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                   alt={displayedPosts[0].title}
                   width={500}
                   height={300}
@@ -139,7 +144,8 @@ export default function BlogPage() {
               <Card key={post.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
-                    src={post.image || "/placeholder.svg"}
+                    // src={post.image || "/placeholder.svg"}
+                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                     alt={post.title}
                     width={500}
                     height={300}
@@ -191,6 +197,9 @@ export default function BlogPage() {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

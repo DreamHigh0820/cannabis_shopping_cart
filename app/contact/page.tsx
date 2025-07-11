@@ -3,13 +3,14 @@
 import type React from "react"
 
 import { useState } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Leaf, Phone, Mail, MessageCircle, Clock, ShoppingCart } from "lucide-react"
+import { Phone, Mail, MessageCircle, Clock } from "lucide-react"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -61,6 +62,9 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <Header variant="public" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="text-center mb-12">
@@ -250,6 +254,8 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

@@ -2,26 +2,28 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
   Database,
   MessageCircle,
-  Settings,
   BarChart3,
   Users,
   Package,
   FileText,
-  Shield,
-  Leaf,
-  ExternalLink,
   CheckCircle,
   XCircle,
   AlertCircle,
 } from "lucide-react"
+import type { AdminSession } from "@/lib/models/Admin"
+import Header from "@/app/components/header"
+import Footer from "@/app/components/footer"
 
 export default function AdminDashboard() {
+  const [admin, setAdmin] = useState<AdminSession | null>(null)
+  const [loading, setLoading] = useState(true)
   const [systemStatus, setSystemStatus] = useState({
     database: "checking",
     telegram: "checking",
@@ -29,16 +31,42 @@ export default function AdminDashboard() {
     blogPosts: 0,
     orders: 0,
   })
+  const router = useRouter()
 
   useEffect(() => {
-    checkSystemStatus()
+    checkAuth()
   }, [])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch("/api/admin/auth/me")
+      if (response.ok) {
+        const data = await response.json()
+        setAdmin(data.admin)
+        checkSystemStatus()
+      } else {
+        router.push("/admin/login")
+      }
+    } catch (error) {
+      router.push("/admin/login")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/admin/auth/logout", { method: "POST" })
+      router.push("/admin/login")
+    } catch (error) {
+      console.error("Logout error:", error)
+    }
+  }
 
   const checkSystemStatus = async () => {
     try {
-      // Check database connection and counts
       const [productsRes, blogRes, telegramRes] = await Promise.all([
-        fetch("/api/products"),
+        fetch("/api/admin/products"),
         fetch("/api/blog"),
         fetch("/api/telegram/status"),
       ])
@@ -52,7 +80,7 @@ export default function AdminDashboard() {
         telegram: telegramStatus.hasBotToken && telegramStatus.hasChatId ? "configured" : "incomplete",
         products: Array.isArray(products) ? products.length : 0,
         blogPosts: Array.isArray(blogs) ? blogs.length : 0,
-        orders: 0, // This would come from an orders API if implemented
+        orders: 0, // Placeholder
       })
     } catch (error) {
       console.error("Error checking system status:", error)
@@ -68,6 +96,7 @@ export default function AdminDashboard() {
     switch (status) {
       case "connected":
       case "configured":
+      case "active":
         return <CheckCircle className="h-5 w-5 text-green-600" />
       case "error":
       case "incomplete":
@@ -97,7 +126,8 @@ export default function AdminDashboard() {
       icon: <Database className="h-6 w-6" />,
       href: "/admin/init",
       status: systemStatus.database,
-      badge: `${systemStatus.products} Products, ${systemStatus.blogPosts} Posts`,
+      badge: "Initialize",
+      requiredRole: "admin",
     },
     {
       title: "Telegram Dashboard",
@@ -106,14 +136,25 @@ export default function AdminDashboard() {
       href: "/admin/telegram",
       status: systemStatus.telegram,
       badge: systemStatus.telegram === "configured" ? "Active" : "Setup Required",
+      requiredRole: "admin",
     },
     {
       title: "Products Manager",
       description: "Add, edit, and manage product inventory",
       icon: <Package className="h-6 w-6" />,
       href: "/admin/products",
-      status: "planned",
-      badge: "Coming Soon",
+      status: "active", // <-- FIX: Changed from 'planned' to 'active'
+      badge: `${systemStatus.products} Products`,
+      requiredRole: "admin",
+    },
+    {
+      title: "Admin Management",
+      description: "Create and manage admin accounts",
+      icon: <Users className="h-6 w-6" />,
+      href: "/admin/admins",
+      status: "active", // Changed from "planned"
+      badge: "Super Admin Only",
+      requiredRole: "super_admin",
     },
     {
       title: "Blog Manager",
@@ -122,6 +163,7 @@ export default function AdminDashboard() {
       href: "/admin/blog",
       status: "planned",
       badge: "Coming Soon",
+      requiredRole: "admin",
     },
     {
       title: "Orders Dashboard",
@@ -130,180 +172,63 @@ export default function AdminDashboard() {
       href: "/admin/orders",
       status: "planned",
       badge: "Coming Soon",
-    },
-    {
-      title: "User Management",
-      description: "Manage customer accounts and permissions",
-      icon: <Users className="h-6 w-6" />,
-      href: "/admin/users",
-      status: "planned",
-      badge: "Coming Soon",
-    },
-    {
-      title: "System Settings",
-      description: "Configure application settings",
-      icon: <Settings className="h-6 w-6" />,
-      href: "/admin/settings",
-      status: "planned",
-      badge: "Coming Soon",
-    },
-    {
-      title: "Security & Logs",
-      description: "View system logs and security settings",
-      icon: <Shield className="h-6 w-6" />,
-      href: "/admin/security",
-      status: "planned",
-      badge: "Coming Soon",
+      requiredRole: "admin",
     },
   ]
 
-  const quickActions = [
-    {
-      title: "Initialize Database",
-      description: "Set up sample data",
-      action: () => window.open("/admin/init", "_blank"),
-      icon: <Database className="h-5 w-5" />,
-      color: "bg-blue-600 hover:bg-blue-700",
-    },
-    {
-      title: "Test Telegram",
-      description: "Send test message",
-      action: () => window.open("/admin/telegram", "_blank"),
-      icon: <MessageCircle className="h-5 w-5" />,
-      color: "bg-green-600 hover:bg-green-700",
-    },
-    {
-      title: "View Store",
-      description: "Open main site",
-      action: () => window.open("/", "_blank"),
-      icon: <ExternalLink className="h-5 w-5" />,
-      color: "bg-purple-600 hover:bg-purple-700",
-    },
-    {
-      title: "View Menu",
-      description: "Check products",
-      action: () => window.open("/menu", "_blank"),
-      icon: <Package className="h-5 w-5" />,
-      color: "bg-orange-600 hover:bg-orange-700",
-    },
-  ]
+  const hasPermission = (requiredRole: string) => {
+    if (!admin) return false
+    if (admin.role === "super_admin") return true
+    if (requiredRole === "admin" && (admin.role === "admin" || admin.role === "moderator")) return true
+    if (requiredRole === "moderator" && admin.role === "moderator") return true
+    return false
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p>Loading admin dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!admin) {
+    return null // Will be redirected by middleware or useEffect
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
+      <Header variant="admin" admin={admin} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* System Status Overview */}
+      <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">System Status</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Database</p>
-                    <p className={`font-semibold ${getStatusColor(systemStatus.database)}`}>
-                      {systemStatus.database === "connected"
-                        ? "Connected"
-                        : systemStatus.database === "error"
-                          ? "Error"
-                          : "Checking..."}
-                    </p>
-                  </div>
-                  {getStatusIcon(systemStatus.database)}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Telegram Bot</p>
-                    <p className={`font-semibold ${getStatusColor(systemStatus.telegram)}`}>
-                      {systemStatus.telegram === "configured"
-                        ? "Active"
-                        : systemStatus.telegram === "incomplete"
-                          ? "Setup Required"
-                          : "Checking..."}
-                    </p>
-                  </div>
-                  {getStatusIcon(systemStatus.telegram)}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Products</p>
-                    <p className="font-semibold text-blue-600">{systemStatus.products}</p>
-                  </div>
-                  <Package className="h-5 w-5 text-blue-600" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">Blog Posts</p>
-                    <p className="font-semibold text-purple-600">{systemStatus.blogPosts}</p>
-                  </div>
-                  <FileText className="h-5 w-5 text-purple-600" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <h2 className="text-2xl font-bold mb-2">Welcome back, {admin.name}!</h2>
+          <p className="text-gray-600">Here's what's happening with your DoughBoy platform today.</p>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickActions.map((action, index) => (
-              <Button
-                key={index}
-                onClick={action.action}
-                className={`${action.color} text-white p-4 h-auto flex flex-col items-center space-y-2`}
-              >
-                {action.icon}
-                <div className="text-center">
-                  <div className="font-semibold">{action.title}</div>
-                  <div className="text-xs opacity-90">{action.description}</div>
-                </div>
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Admin Pages */}
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Administration Pages</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {adminPages.map((page, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {adminPages
+            .filter((page) => hasPermission(page.requiredRole))
+            .map((page, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-green-100 rounded-lg text-green-600">{page.icon}</div>
-                      <div>
-                        <CardTitle className="text-lg">{page.title}</CardTitle>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {page.status !== "planned" && getStatusIcon(page.status)}
+                      <CardTitle className="text-lg">{page.title}</CardTitle>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{page.description}</p>
+                  <p className="text-gray-600 mb-4 h-12">{page.description}</p>
                   <div className="flex items-center justify-between">
                     <Badge
                       variant={page.status === "planned" ? "secondary" : "outline"}
                       className={
-                        page.status === "configured" || page.status === "connected"
+                        page.status === "configured" || page.status === "connected" || page.status === "active"
                           ? "bg-green-100 text-green-800"
                           : page.status === "error" || page.status === "incomplete"
                             ? "bg-red-100 text-red-800"
@@ -327,38 +252,11 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             ))}
-          </div>
         </div>
+      </main>
 
-        {/* Environment Setup Guide */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Environment Setup</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600 mb-4">
-              Make sure your <code className="bg-gray-100 px-2 py-1 rounded">.env</code> file contains:
-            </p>
-            <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
-              <div>MONGODB_URI=your_mongodb_connection_string</div>
-              <div>TELEGRAM_BOT_TOKEN=your_bot_token</div>
-              <div>TELEGRAM_CHAT_ID=your_chat_id</div>
-            </div>
-            <div className="mt-4 flex space-x-4">
-              <Link href="/admin/init">
-                <Button variant="outline" size="sm">
-                  Initialize Database
-                </Button>
-              </Link>
-              <Link href="/admin/telegram">
-                <Button variant="outline" size="sm">
-                  Test Telegram
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

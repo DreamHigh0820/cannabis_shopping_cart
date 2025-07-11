@@ -46,7 +46,7 @@ export async function createProduct(productData: Omit<Product, "_id">): Promise<
 }
 
 export async function updateProduct(id: string, productData: Partial<Product>): Promise<Product | null> {
-  const db = await getDatabase()
+const db = await getDatabase()
   if (!ObjectId.isValid(id)) {
     return null
   }

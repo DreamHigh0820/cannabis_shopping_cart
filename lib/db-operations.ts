@@ -79,6 +79,14 @@ export async function deleteAdmin(id: string): Promise<boolean> {
 }
 
 // --- Blog Post Operations (for completeness) ---
+export async function getBlogPostById(id: string): Promise<Product | null> {
+  const db = await getDatabase()
+  if (!ObjectId.isValid(id)) {
+    return null
+  }
+  const product = await db.collection<Product>("blog_posts").findOne({ _id: new ObjectId(id) })
+  return product
+}
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
   try {
@@ -90,3 +98,15 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     return []
   }
 }
+
+export async function getBlogPostsByCategory(category: string): Promise<BlogPost[]> {
+  try {
+    const db = await getDatabase()
+    const posts = await db.collection<BlogPost>("blog_posts").find({ category }).sort({ date: -1 }).toArray()
+    return posts
+  } catch (error) {
+    console.error("Error fetching blog posts:", error)
+    return []
+  }
+}
+

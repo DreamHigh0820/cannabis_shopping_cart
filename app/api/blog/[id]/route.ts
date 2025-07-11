@@ -3,8 +3,7 @@ import { getBlogPostById } from "@/lib/db-operations"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = Number.parseInt(params.id)
-    const post = await getBlogPostById(id)
+    const post = await getBlogPostById(params.id)
 
     if (!post) {
       return NextResponse.json({ error: "Blog post not found" }, { status: 404 })

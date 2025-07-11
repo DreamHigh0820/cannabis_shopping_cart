@@ -1,9 +1,11 @@
+export type ProductCategory = "flowers" | "vapes" | "edibles" | "extracts" | "pound"
+
 export interface Product {
   _id?: string
   id: number
   code: string // e.g., XXYY##
   name: string
-  category: "flowers" | "vapes" | "edibles" | "extracts" | "pound"
+  category: ProductCategory
   price: number
   quantity: number // Stock quantity
   image: string
@@ -12,7 +14,8 @@ export interface Product {
   strain: string
   cost?: number // Admin-only field
   featured?: boolean
-  // Removed thc and cbd
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface BlogPost {

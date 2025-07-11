@@ -1,5 +1,5 @@
 import { getDatabase } from "./mongodb"
-import type { Product, BlogPost, Admin } from "./models"
+import type { Product, BlogPost, ProductCategory, Admin } from "./models"
 import { ObjectId } from "mongodb"
 
 // --- Product Operations ---
@@ -22,6 +22,20 @@ export async function getProductById(id: string): Promise<Product | null> {
   }
   const product = await db.collection<Product>("products").findOne({ _id: new ObjectId(id) })
   return product
+}
+
+export async function getProductsByCategory(category: ProductCategory): Promise<Product[]> {
+  try {
+    const db = await getDatabase()
+    const products = await db.collection<Product>("products")
+      .find({ category })
+      .sort({ createdAt: -1 }) // Sort by creation date, or use 'id' if you prefer
+      .toArray()
+    return products
+  } catch (error) {
+    console.error("Error fetching products:", error)
+    return []
+  }
 }
 
 export async function createProduct(productData: Omit<Product, "_id">): Promise<Product> {

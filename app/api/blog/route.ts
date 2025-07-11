@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { getBlogPosts, getBlogPostsByCategory } from "@/lib/db-operations"
 
+// ADD THIS LINE - This is what's missing from your code
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl

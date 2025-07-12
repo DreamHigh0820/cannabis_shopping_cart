@@ -5,6 +5,8 @@ import type { NextRequest } from "next/server"
 export async function GET(request: NextRequest) {
   try {
     const admin = await verifyAdminAuth(request)
+
+    console.log("admin", admin)
     if (!admin) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
     }

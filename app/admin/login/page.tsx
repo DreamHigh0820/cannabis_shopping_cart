@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),
       })
-      console.log("response", response)
+      console.log("admin login response", response)
       if (response.ok) {
         router.push("/admin")
       } else {

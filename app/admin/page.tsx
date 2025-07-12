@@ -40,8 +40,11 @@ export default function AdminDashboard() {
   const checkAuth = async () => {
     try {
       const response = await fetch("/api/admin/auth/me")
+      console.log("admin data", response)
+      
       if (response.ok) {
         const data = await response.json()
+
         setAdmin(data.admin)
         checkSystemStatus()
       } else {

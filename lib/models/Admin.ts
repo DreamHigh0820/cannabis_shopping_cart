@@ -14,10 +14,11 @@ export interface Admin {
 }
 
 export interface AdminSession {
-  id: number
+  id?: number // <-- Optional if not always present
   adminId: string
   name: string
   email: string
   role: "super_admin" | "admin" | "moderator"
   isActive: boolean
 }
+

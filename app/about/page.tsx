@@ -91,10 +91,10 @@ export default function AboutPage() {
             <div>
               <Image
                 src="/placeholder.svg"
-                alt="Our Story"
                 width={600}
+                alt="Our Story"
                 height={400}
-                className="rounded-lg shadow-lg"
+                className="rounded-lg shadow-lg lg:w-[600px] w-full"
               />
             </div>
           </div>

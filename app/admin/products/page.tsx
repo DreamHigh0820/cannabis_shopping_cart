@@ -53,9 +53,9 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <BackButton />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-y-4 mb-6">
         <h1 className="text-2xl font-bold">Product Management</h1>
         <Link href="/admin/products/new">
           <Button>

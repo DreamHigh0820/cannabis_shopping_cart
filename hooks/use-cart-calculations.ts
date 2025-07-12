@@ -1,81 +1,61 @@
 "use client"
 
 import { useMemo } from "react"
-import type { CartState } from "@/lib/cart-context"
+import type { CartItem } from "@/lib/cart-context"
 
-// Define constants for "magic numbers"
-const QP_FLOWER_SHIPPING_FEE = 100
-const QP_FLOWER_DISCOUNT_THRESHOLD = 4 // 1-4 QPs get one shipping fee
-const VAPE_2DAY_SHIPPING_RATE = 0.5
-const VAPE_OVERNIGHT_SHIPPING_RATE = 1
-const FLOWER_2DAY_SHIPPING_RATE = 50
-const FLOWER_OVERNIGHT_SHIPPING_RATE = 100
-const PAYMENT_UPCHARGE_RATE = 0.03
+interface CalculationInputs {
+  items: CartItem[]
+  shippingCarrier: "ups" | "usps" | null
+  shippingSpeed: "ground" | "2-day" | "overnight" | "priority" | "express" | null
+  paymentMethod: string | null
+}
 
-// Pound volume discount tiers
-const POUND_DISCOUNT_TIERS = [
-  { min: 7, discount: 100 },
-  { min: 4, discount: 75 },
-  { min: 1, discount: 50 },
-]
-
-export const useCartCalculations = (cartState: CartState) => {
+export function useCartCalculations({ items, shippingCarrier, shippingSpeed, paymentMethod }: CalculationInputs) {
   const calculations = useMemo(() => {
-    const { items, shippingCarrier, shippingSpeed, paymentMethod } = cartState
+    const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
 
-    const qpFlowerCount = items.reduce(
-      (count, item) => (item.category === "flower" && item.name.includes("QP") ? count + item.quantity : count),
-      0,
-    )
-    const vapeCount = items.reduce((count, item) => (item.category === "vape" ? count + item.quantity : count), 0)
-    const poundFlowerCount = items.reduce(
-      (count, item) => (item.category === "flower" && item.name.includes("Pound") ? count + item.quantity : count),
-      0,
-    )
-
-    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-
-    // 1. Volume Discount for Pounds
+    // Volume Discount for "Flower by the Pound"
+    const poundItems = items.filter((item) => item.category === "pound")
+    const poundItemCount = poundItems.reduce((acc, item) => acc + item.quantity, 0)
     let volumeDiscount = 0
-    if (poundFlowerCount > 0) {
-      const tier = POUND_DISCOUNT_TIERS.find((t) => poundFlowerCount >= t.min)
-      if (tier) {
-        volumeDiscount = tier.discount * poundFlowerCount
-      }
+    if (poundItemCount > 0) {
+      const discountPerUnit = poundItemCount >= 7 ? 100 : poundItemCount >= 4 ? 75 : poundItemCount >= 1 ? 50 : 0
+      volumeDiscount = poundItemCount * discountPerUnit
     }
 
-    // 2. Shipping Discount for QP Flowers
-    // This is the "auto coupon" logic.
-    let shippingDiscount = 0
-    if (qpFlowerCount > 0) {
-      const shippingSets = Math.ceil(qpFlowerCount / QP_FLOWER_DISCOUNT_THRESHOLD)
-      const expectedShippingCost = shippingSets * QP_FLOWER_SHIPPING_FEE
-      // The base price includes $100 shipping per QP. We need to refund the difference.
-      const includedShippingCost = qpFlowerCount * QP_FLOWER_SHIPPING_FEE
-      shippingDiscount = includedShippingCost - expectedShippingCost
-    }
+    // Shipping Coupon for QP Flowers
+    const qpFlowerItems = items.filter((item) => item.category === "flowers")
+    const qpFlowerCount = qpFlowerItems.reduce((acc, item) => acc + item.quantity, 0)
+    const requiredShippingCharges = Math.ceil(qpFlowerCount / 4)
+    const paidShippingCharges = qpFlowerCount
+    const shippingCoupon = (paidShippingCharges - requiredShippingCharges) * 100
+    const shippingDiscount = qpFlowerCount > 0 ? Math.max(0, shippingCoupon) : 0
 
-    // 3. Shipping Upgrade Costs
+    // Shipping Speed Upgrade Cost
     let shippingUpgradeCost = 0
     if (shippingCarrier && shippingSpeed) {
-      if (shippingSpeed === "2-day") {
-        shippingUpgradeCost += vapeCount * VAPE_2DAY_SHIPPING_RATE
-        shippingUpgradeCost += (qpFlowerCount + poundFlowerCount) * FLOWER_2DAY_SHIPPING_RATE
-      } else if (shippingSpeed === "overnight") {
-        shippingUpgradeCost += vapeCount * VAPE_OVERNIGHT_SHIPPING_RATE
-        shippingUpgradeCost += (qpFlowerCount + poundFlowerCount) * FLOWER_OVERNIGHT_SHIPPING_RATE
-      }
+      items.forEach((item) => {
+        if (item.category === "flowers") {
+          if (shippingCarrier === "ups" && shippingSpeed === "2-day") shippingUpgradeCost += 50 * item.quantity
+          if (shippingCarrier === "ups" && shippingSpeed === "overnight") shippingUpgradeCost += 100 * item.quantity
+          if (shippingCarrier === "usps" && shippingSpeed === "express") shippingUpgradeCost += 50 * item.quantity
+        } else if (item.category === "vapes") {
+          if (shippingCarrier === "ups" && shippingSpeed === "2-day") shippingUpgradeCost += 0.5 * item.quantity
+          if (shippingCarrier === "ups" && shippingSpeed === "overnight") shippingUpgradeCost += 1 * item.quantity
+          if (shippingCarrier === "usps" && shippingSpeed === "express") shippingUpgradeCost += 0.5 * item.quantity
+        }
+      })
     }
 
-    // 4. Payment Upcharge
-    const priceAfterDiscounts = subtotal - volumeDiscount - shippingDiscount + shippingUpgradeCost
+    const totalBeforeUpcharge = subtotal - volumeDiscount - shippingDiscount + shippingUpgradeCost
+
+    // Payment Method Upcharge
     let paymentUpcharge = 0
     if (paymentMethod === "CashApp" || paymentMethod === "Zelle") {
-      paymentUpcharge = priceAfterDiscounts * PAYMENT_UPCHARGE_RATE
+      paymentUpcharge = totalBeforeUpcharge * 0.03
     }
 
-    // 5. Final Total
-    const total = priceAfterDiscounts + paymentUpcharge
+    const total = totalBeforeUpcharge + paymentUpcharge
 
     return {
       subtotal,
@@ -84,9 +64,9 @@ export const useCartCalculations = (cartState: CartState) => {
       shippingUpgradeCost,
       paymentUpcharge,
       total,
-      qpFlowerCount, // returning this for potential display/debug
+      qpFlowerCount,
     }
-  }, [cartState])
+  }, [items, shippingCarrier, shippingSpeed, paymentMethod])
 
   return calculations
 }

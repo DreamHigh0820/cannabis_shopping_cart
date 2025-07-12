@@ -33,7 +33,7 @@ export default function InitPage() {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="max-w-7xl min-h-screen mx-auto lg:px-8 sm:px-6 px-4 py-8">
       <div className="max-w-md mx-auto">
         <BackButton />
         <Card>

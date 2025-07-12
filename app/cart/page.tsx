@@ -26,20 +26,20 @@ export default function CartPage() {
       paymentMethod,
     })
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity > 0) {
       cartDispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
     }
   }
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: string) => {
     cartDispatch({ type: "REMOVE_ITEM", payload: { id } })
   }
 
   const handleCarrierChange = (value: "ups" | "usps") => {
     cartDispatch({ type: "SET_SHIPPING_CARRIER", payload: value })
     // Reset speed if carrier changes
-    cartDispatch({ type: "SET_SHIPPING_SPEED", payload: null })
+    cartDispatch({ type: "SET_SHIPPING_SPEED", payload: 'ground' })
   }
 
   const handleSpeedChange = (value: any) => {
@@ -52,16 +52,20 @@ export default function CartPage() {
 
   if (cartState.items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <Card className="w-full max-w-md text-center">
-          <CardHeader>
-            <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
-            <CardTitle>Your Cart is Empty</CardTitle>
+          <CardHeader className="pb-4">
+            <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+            <CardTitle className="text-xl sm:text-2xl">Your Cart is Empty</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-6">Looks like you haven't added anything to your cart yet.</p>
+            <p className="text-gray-600 mb-6 text-sm sm:text-base">
+              Looks like you haven't added anything to your cart yet.
+            </p>
             <Link href="/menu">
-              <Button className="bg-green-600 hover:bg-green-700">Start Shopping</Button>
+              <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                Start Shopping
+              </Button>
             </Link>
           </CardContent>
         </Card>
@@ -73,54 +77,117 @@ export default function CartPage() {
     <div className="bg-gray-50">
       <Header variant="public" />
 
-      <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Shopping Cart</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="min-h-[calc(100dvh-496px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Your Shopping Cart</h1>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Cart Items */}
           <div className="lg:col-span-2">
             <Card>
               <CardContent className="p-0">
                 <div className="divide-y">
                   {cartState.items.map((item) => (
-                    <div key={item.id} className="flex items-center p-4 gap-4">
-                      <Image
-                        // src={item.image || "/placeholder.svg"}
-                        src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-                        alt={item.name}
-                        width={80}
-                        height={80}
-                        className="rounded-md object-cover"
-                      />
-                      <div className="flex-grow">
-                        <h3 className="font-semibold">{item.name}</h3>
-                        <p className="text-sm text-gray-500 capitalize">{item.category}</p>
-                        <p className="text-sm font-medium">${item.price.toFixed(2)}</p>
+                    <div key={item.id} className="p-4 sm:p-6">
+                      {/* Mobile Layout */}
+                      <div className="block sm:hidden">
+                        <div className="flex items-start gap-3 mb-3">
+                          <Image
+                            src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+                            alt={item.name}
+                            width={80}
+                            height={80}
+                            className="rounded-md object-cover flex-shrink-0"
+                          />
+                          <div className="flex-grow min-w-0">
+                            <h3 className="font-semibold text-base leading-tight mb-1">{item.name}</h3>
+                            <p className="text-sm text-gray-500 capitalize mb-1">{item.category}</p>
+                            <p className="text-sm font-medium">${item.price.toFixed(2)}</p>
+                          </div>
+                          <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={() => removeItem(item.id)}
+                            className="flex-shrink-0"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              className="h-8 w-8"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </Button>
+                            <Input
+                              type="number"
+                              value={item.quantity}
+                              onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
+                              className="w-12 h-8 text-center text-sm"
+                            />
+                            <Button
+                              size="icon"
+                              variant="outline"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              className="h-8 w-8"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <p className="font-semibold text-right">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <Input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
-                          className="w-16 text-center"
+
+                      {/* Desktop Layout */}
+                      <div className="hidden sm:flex items-center gap-4">
+                        <Image
+                          src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+                          alt={item.name}
+                          width={80}
+                          height={80}
+                          className="rounded-md object-cover flex-shrink-0"
                         />
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-4 w-4" />
+                        <div className="flex-grow min-w-0">
+                          <h3 className="font-semibold text-base lg:text-lg">{item.name}</h3>
+                          <p className="text-sm text-gray-500 capitalize">{item.category}</p>
+                          <p className="text-sm font-medium">${item.price.toFixed(2)}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="h-8 w-8 lg:h-10 lg:w-10"
+                          >
+                            <Minus className="h-3 w-3 lg:h-4 lg:w-4" />
+                          </Button>
+                          <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
+                            className="w-12 lg:w-16 text-center h-8 lg:h-10"
+                          />
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="h-8 w-8 lg:h-10 lg:w-10"
+                          >
+                            <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
+                          </Button>
+                        </div>
+                        <p className="font-semibold w-16 lg:w-20 text-right">
+                          ${(item.price * item.quantity).toFixed(2)}
+                        </p>
+                        <Button size="icon" variant="ghost" onClick={() => removeItem(item.id)}>
+                          <X className="h-4 w-4 lg:h-5 lg:w-5" />
                         </Button>
                       </div>
-                      <p className="font-semibold w-20 text-right">${(item.price * item.quantity).toFixed(2)}</p>
-                      <Button size="icon" variant="ghost" onClick={() => removeItem(item.id)}>
-                        <X className="h-5 w-5" />
-                      </Button>
                     </div>
                   ))}
                 </div>
@@ -128,17 +195,18 @@ export default function CartPage() {
             </Card>
           </div>
 
+          {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="sticky top-4">
               <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Shipping Selection */}
                 <div className="space-y-2">
-                  <Label>Shipping Carrier</Label>
+                  <Label className="text-sm font-medium">Shipping Carrier</Label>
                   <Select onValueChange={handleCarrierChange} value={shippingCarrier || ""}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue placeholder="Select Carrier" />
                     </SelectTrigger>
                     <SelectContent>
@@ -147,11 +215,12 @@ export default function CartPage() {
                     </SelectContent>
                   </Select>
                 </div>
+                
                 {shippingCarrier && (
                   <div className="space-y-2">
-                    <Label>Shipping Speed</Label>
+                    <Label className="text-sm font-medium">Shipping Speed</Label>
                     <Select onValueChange={handleSpeedChange} value={shippingSpeed || ""}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="Select Speed" />
                       </SelectTrigger>
                       <SelectContent>
@@ -175,9 +244,9 @@ export default function CartPage() {
 
                 {/* Payment Selection */}
                 <div className="space-y-2">
-                  <Label>Payment Method</Label>
+                  <Label className="text-sm font-medium">Payment Method</Label>
                   <Select onValueChange={handlePaymentChange} value={paymentMethod || ""}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-10">
                       <SelectValue placeholder="Select Payment" />
                     </SelectTrigger>
                     <SelectContent>
@@ -227,7 +296,7 @@ export default function CartPage() {
 
                 <Separator />
 
-                <div className="flex justify-between font-bold text-lg">
+                <div className="flex justify-between font-bold text-base sm:text-lg">
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
@@ -237,26 +306,24 @@ export default function CartPage() {
                   className={!shippingCarrier || !shippingSpeed || !paymentMethod ? "pointer-events-none" : ""}
                 >
                   <Button
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full bg-green-600 hover:bg-green-700 h-11 text-sm sm:text-base"
                     disabled={!shippingCarrier || !shippingSpeed || !paymentMethod}
                   >
                     Proceed to Checkout
                   </Button>
                 </Link>
-                {!shippingCarrier ||
-                  !shippingSpeed ||
-                  (!paymentMethod && (
-                    <p className="text-xs text-center text-red-500 mt-2">
-                      Please select shipping and payment options to continue.
-                    </p>
-                  ))}
+                
+                {(!shippingCarrier || !shippingSpeed || !paymentMethod) && (
+                  <p className="text-xs text-center text-red-500 mt-2">
+                    Please select shipping and payment options to continue.
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
       <Footer variant="public" />
     </div>
   )

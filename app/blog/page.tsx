@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { BlogPost } from "@/lib/models"
 import { Calendar, User, ArrowRight } from "lucide-react"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
@@ -13,7 +14,7 @@ import Footer from "@/app/components/footer"
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [visiblePosts, setVisiblePosts] = useState(6)
-  const [blogPosts, setBlogPosts] = useState([])
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

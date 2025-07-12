@@ -200,10 +200,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 min-h-screen">
       <Header variant="admin" admin={admin} />
 
-      <main className="min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="min-h-[calc(100dvh-496px)] max-w-7xl mx-auto lg:px-8 sm:px-6 px-4 py-8">
         <div className="mb-8">
           <h2 className="text-2xl font-bold mb-2">Welcome back, {admin.name}!</h2>
           <p className="text-gray-600">Here's what's happening with your DoughBoy platform today.</p>

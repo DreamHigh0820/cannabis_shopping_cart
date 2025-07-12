@@ -3,12 +3,13 @@
 import type React from "react"
 import { createContext, useContext, useReducer, useEffect } from "react"
 
-interface CartItem {
+export interface CartItem {
   id: string // Use product ID
   name: string
   category: string
   price: number
   quantity: number
+  image: string
 }
 
 interface CartState {

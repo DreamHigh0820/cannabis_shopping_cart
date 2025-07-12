@@ -14,6 +14,7 @@ export interface Admin {
 }
 
 export interface AdminSession {
+  id: number
   adminId: string
   name: string
   email: string

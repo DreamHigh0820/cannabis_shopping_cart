@@ -22,8 +22,6 @@ interface Product {
   image: string
   rating: number
   description: string
-  thc: string
-  cbd: string
   strain?: string
 }
 
@@ -94,19 +92,17 @@ export default function MenuPage() {
     })
   }
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: Product) => {
     const quantity = selectedQuantities[product.id] || 1
     cartDispatch({
       type: "ADD_ITEM",
       payload: {
-        id: product.id,
+        id: product.id.toString(),
         name: product.name,
         category: product.category,
         price: product.price,
         image: product.image,
-        quantity: quantity,
-        thc: product.thc,
-        cbd: product.cbd,
+        quantity: quantity
       },
     })
 
@@ -125,22 +121,25 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header */}
       <Header variant="public" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Menu</h1>
-          <p className="text-xl text-gray-600">Premium cannabis products for every preference</p>
+      <div className="min-h-[calc(100vh-496px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* Hero Section */}
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">Our Menu</h1>
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600">Premium cannabis products for every preference</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-between">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex items-center space-x-4">
-              <Filter className="h-5 w-5 text-gray-500" />
+        {/* Filters and Sort Controls */}
+        <div className="flex flex-col space-y-4 sm:space-y-0 md:flex-row sm:gap-4 mb-6 sm:mb-8 sm:justify-between">
+          {/* Left side filters */}
+          <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:gap-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Filter className="h-5 w-5 text-gray-500 flex-shrink-0" />
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -152,10 +151,10 @@ export default function MenuPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-500">Sort by:</span>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <span className="text-sm text-gray-500 flex-shrink-0">Sort by:</span>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>
@@ -168,8 +167,9 @@ export default function MenuPage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Show:</span>
+          {/* Right side pagination control */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <span className="text-sm text-gray-500 flex-shrink-0 hidden sm:inline">Show:</span>
             <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
               <SelectTrigger className="w-24">
                 <SelectValue />
@@ -181,12 +181,13 @@ export default function MenuPage() {
                 <SelectItem value="24">24</SelectItem>
               </SelectContent>
             </Select>
-            <span className="text-sm text-gray-500">per page</span>
+            <span className="text-sm text-gray-500 flex-shrink-0 hidden sm:inline">per page</span>
           </div>
         </div>
 
-        <div className="mb-6">
-          <p className="text-gray-600">
+        {/* Results count */}
+        <div className="mb-4 sm:mb-6">
+          <p className="text-sm sm:text-base text-gray-600">
             Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, sortedProducts.length)} of{" "}
             {sortedProducts.length} products
             {selectedCategory !== "all" && (
@@ -197,24 +198,24 @@ export default function MenuPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {paginatedProducts.map((product: any) => {
             const selectedQty = selectedQuantities[product.id] || 1
             return (
               <Card key={product.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
-                    // src={product.image || "/placeholder.svg"}
                     src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                     alt={product.name}
-                    width={200}
-                    height={200}
-                    className="w-full h-48 object-cover rounded-t-lg"
+                    width={400}
+                    height={400}
+                    className="w-full h-40 sm:h-48 object-cover rounded-t-lg"
                   />
                 </CardHeader>
-                <CardContent className="p-4">
+                <CardContent className="p-3 sm:p-4">
                   <div className="flex justify-between items-start mb-2">
-                    <Badge variant="secondary" className="mb-2 capitalize">
+                    <Badge variant="secondary" className="mb-2 capitalize text-xs">
                       {product.category}
                     </Badge>
                     <div className="flex items-center">
@@ -222,27 +223,35 @@ export default function MenuPage() {
                       <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
                     </div>
                   </div>
-                  <h3 className="font-semibold mb-2">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{product.description}</p>
-                  <div className="flex justify-between text-xs text-gray-500 mb-3">
-                    <span>THC: {product.thc}</span>
-                    <span>CBD: {product.cbd}</span>
-                  </div>
+                  <h3 className="font-semibold mb-2 text-sm sm:text-base line-clamp-2">{product.name}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3 min-h-16 sm:min-h-20 line-clamp-3 sm:line-clamp-4">
+                    {product.description}
+                  </p>
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-2xl font-bold text-green-600">${product.price}</span>
-                    <div className="flex items-center space-x-2">
-                      <Button size="sm" variant="outline" onClick={() => updateQuantity(product.id, -1)}>
-                        <Minus className="h-4 w-4" />
+                    <span className="text-lg sm:text-2xl font-bold text-green-600">${product.price}</span>
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => updateQuantity(product.id, -1)}
+                        className="h-8 w-8 p-0 sm:h-auto sm:w-auto sm:p-2"
+                      >
+                        <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
-                      <span className="font-medium w-8 text-center">{selectedQty}</span>
-                      <Button size="sm" variant="outline" onClick={() => updateQuantity(product.id, 1)}>
-                        <Plus className="h-4 w-4" />
+                      <span className="font-medium w-6 sm:w-8 text-center text-sm sm:text-base">{selectedQty}</span>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => updateQuantity(product.id, 1)}
+                        className="h-8 w-8 p-0 sm:h-auto sm:w-auto sm:p-2"
+                      >
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
                     </div>
                   </div>
                   <Button
                     size="sm"
-                    className="w-full bg-green-600 hover:bg-green-700"
+                    className="w-full bg-green-600 hover:bg-green-700 text-xs sm:text-sm"
                     onClick={() => addToCart(product)}
                   >
                     Add to Cart
@@ -253,21 +262,27 @@ export default function MenuPage() {
           })}
         </div>
 
+        {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center space-x-2 mt-8">
+          <div className="flex justify-center items-center space-x-1 sm:space-x-2 mt-6 sm:mt-8">
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              className="px-2 sm:px-4 text-xs sm:text-sm"
             >
-              Previous
+              <span className="hidden sm:inline">Previous</span>
+              <span className="sm:hidden">Prev</span>
             </Button>
 
-            <div className="flex space-x-1">
+            {/* Desktop pagination - show all pages */}
+            <div className="hidden sm:flex space-x-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <Button
                   key={page}
                   variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
                   className={currentPage === page ? "bg-green-600 hover:bg-green-700" : ""}
                   onClick={() => setCurrentPage(page)}
                 >
@@ -276,31 +291,43 @@ export default function MenuPage() {
               ))}
             </div>
 
+            {/* Mobile pagination - show current page info */}
+            <div className="sm:hidden flex items-center space-x-2">
+              <span className="text-sm text-gray-600">
+                {currentPage} of {totalPages}
+              </span>
+            </div>
+
             <Button
               variant="outline"
+              size="sm"
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
+              className="px-2 sm:px-4 text-xs sm:text-sm"
             >
-              Next
+              <span className="hidden sm:inline">Next</span>
+              <span className="sm:hidden">Next</span>
             </Button>
           </div>
         )}
 
+        {/* Floating Cart Summary */}
         {cartState.totalItems > 0 && (
-          <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border">
-            <div className="flex items-center justify-between mb-2 gap-x-1">
-              <span className="font-semibold">Cart Summary</span>
-              <span className="text-green-600 font-bold">${cartState.totalPrice.toFixed(2)}</span>
+          <div className="fixed bottom-4 right-4 left-4 sm:left-auto bg-white rounded-lg shadow-lg p-3 sm:p-4 border max-w-sm sm:max-w-none mx-auto sm:mx-0">
+            <div className="flex items-center justify-between mb-2 gap-x-2">
+              <span className="font-semibold text-sm sm:text-base">Cart Summary</span>
+              <span className="text-green-600 font-bold text-sm sm:text-base">${cartState.totalPrice.toFixed(2)}</span>
             </div>
-            <p className="text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
+            <p className="text-xs sm:text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
             <Link href="/cart">
-              <Button className="w-full bg-green-600 hover:bg-green-700">View Cart</Button>
+              <Button className="w-full bg-green-600 hover:bg-green-700 text-sm py-2">View Cart</Button>
             </Link>
           </div>
         )}
       </div>
-            {/* Footer */}
-            <Footer variant="public" />
+
+      {/* Footer */}
+      <Footer variant="public" />
     </div>
   )
 }

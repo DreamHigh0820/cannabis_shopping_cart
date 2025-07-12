@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/badge"
 import { Leaf, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
+import { Product, BlogPost } from "@/lib/models"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
 
 export default function HomePage() {
-  const [featuredProducts, setFeaturedProducts] = useState([])
-  const [blogPosts, setBlogPosts] = useState([])
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [notification, setNotification] = useState<string | null>(null)
 
@@ -29,8 +30,6 @@ export default function HomePage() {
         price: product.price,
         image: product.image,
         quantity: 1,
-        thc: product.thc,
-        cbd: product.cbd,
       },
     })
 
@@ -44,13 +43,13 @@ export default function HomePage() {
         // Fetch featured products
         const productsResponse = await fetch("/api/products")
         const allProducts = await productsResponse.json()
-        const featured = allProducts.filter((product) => product.featured).slice(0, 4)
+        const featured = allProducts.filter((product: Product) => product.featured).slice(0, 4)
         setFeaturedProducts(featured)
 
         // Fetch featured blog posts
         const blogResponse = await fetch("/api/blog")
         const allPosts = await blogResponse.json()
-        const featuredPosts = allPosts.filter((post) => post.featured).slice(0, 3)
+        const featuredPosts = allPosts.filter((post: BlogPost) => post.featured).slice(0, 3)
         setBlogPosts(featuredPosts)
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -99,7 +98,7 @@ export default function HomePage() {
                 Experience the finest selection of flowers, vapes, edibles, and extracts. Quality guaranteed,
                 satisfaction delivered.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-row gap-4">
                 <Link href="/menu">
                   <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
                     Shop Now
@@ -169,7 +168,6 @@ export default function HomePage() {
                   <Image
                     // src={product.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
                     src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-
                     alt={product.name}
                     width={400}
                     height={400}
@@ -185,11 +183,13 @@ export default function HomePage() {
                     </Badge>
                     <div className="flex items-center">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
+                      {/* <span className="text-sm text-gray-600 ml-1">{product.rating}</span> */}
                     </div>
                   </div>
                   <h3 className="font-semibold mb-2">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{product.description}</p>
+                  <p className="text-sm text-gray-600 mb-6 min-h-20 line-clamp-4">
+                    {product.description}
+                  </p>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-green-600">${product.price}</span>
                     <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}>

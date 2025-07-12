@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center lg:px-8 sm:px-6 px-4 py-8">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <Leaf className="mx-auto h-10 w-10 text-green-600" />

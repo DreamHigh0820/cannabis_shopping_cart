@@ -55,7 +55,7 @@ const db = await getDatabase()
   const result = await db
     .collection<Product>("products")
     .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: dataToUpdate }, { returnDocument: "after" })
-  return result
+  return result                     
 }
 
 export async function deleteProduct(id: string): Promise<boolean> {

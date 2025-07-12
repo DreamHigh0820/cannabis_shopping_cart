@@ -15,9 +15,6 @@ const getSecretKey = () => {
   return new TextEncoder().encode(JWT_SECRET)
 }
 
-/**
- * Generates a JWT token using the Edge-compatible 'jose' library.
- */
 export async function generateToken(adminSession: AdminSession): Promise<string> {
   const key = getSecretKey()
   const token = await new SignJWT(adminSession as unknown as JWTPayload)
@@ -27,10 +24,7 @@ export async function generateToken(adminSession: AdminSession): Promise<string>
     .sign(key)
   return token
 }
-/**
- * Verifies a JWT token using the Edge-compatible 'jose' library.
- * This function is safe to run in middleware.
- */
+
 export async function verifyToken(token: string): Promise<AdminSession | null> {
   try {
     const key = getSecretKey()

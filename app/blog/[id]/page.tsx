@@ -111,7 +111,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
             alt={blogPost.title}
             width={800}
             height={400}
-            className="w-full h-64 md:h-96 object-cover rounded-lg"
+            className="w-full h-64 md:h-96 object-cover rounded-2xl"
           />
         </div>
 
@@ -163,7 +163,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
               />
               <Button className="bg-red-600 hover:bg-red-700">Subscribe</Button>
             </div>

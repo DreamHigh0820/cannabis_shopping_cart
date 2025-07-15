@@ -165,7 +165,7 @@ export default function AdminsPage() {
         ) : (
           <div className="space-y-2">
             {admins.map((admin, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={index} className="flex items-center justify-between p-4 border rounded-2xl">
                 <div>
                   <p className="font-semibold">{admin.name}</p>
                   <p className="text-sm text-gray-500">

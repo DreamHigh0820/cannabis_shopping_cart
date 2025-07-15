@@ -174,7 +174,7 @@ export default function AdminProductsPage() {
                     {products.map((product) => (
                       <TableRow key={product._id}>
                         <TableCell>
-                          <div className="w-12 h-12 relative rounded-md overflow-hidden bg-gray-100">
+                          <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-gray-100">
                             <ProductImage
                               src={product.image}
                               alt={product.name}
@@ -257,7 +257,7 @@ export default function AdminProductsPage() {
                     <CardContent className="p-4">
                       <div className="flex gap-4">
                         {/* Product Image */}
-                        <div className="w-16 h-16 relative rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
+                        <div className="w-16 h-16 relative rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                           <ProductImage
                             src={product.image}
                             alt={product.name}

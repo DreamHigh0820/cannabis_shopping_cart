@@ -50,7 +50,7 @@ export default function InitPage() {
             </Button>
 
             {result && (
-              <div className="p-3 rounded-md bg-gray-100">
+              <div className="p-3 rounded-lg bg-gray-100">
                 <p className="text-sm">{result}</p>
               </div>
             )}

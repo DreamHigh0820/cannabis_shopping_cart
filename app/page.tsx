@@ -118,7 +118,7 @@ export default function HomePage() {
 
       {/* Notification */}
       {notification && (
-        <div className="fixed top-20 right-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right">
+        <div className="fixed top-20 right-4 bg-red-600 text-white px-4 py-2 rounded-2xl shadow-lg z-50 animate-in slide-in-from-right">
           {notification}
         </div>
       )}
@@ -160,7 +160,7 @@ export default function HomePage() {
                 alt="Premium Cannabis Products"
                 width={400}
                 height={400}
-                className="rounded-lg shadow-2xl"
+                className="rounded-2xl shadow-2xl"
               />
             </div>
           </div>
@@ -317,7 +317,7 @@ export default function HomePage() {
 
       {/* Floating Cart Summary */}
       {cartState.totalItems > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50 max-w-sm">
+        <div className="fixed bottom-4 right-4 bg-white rounded-2xl shadow-lg p-4 border z-50 max-w-sm">
           <div className="flex items-center justify-between mb-2 gap-x-2">
             <span className="font-semibold text-sm">Cart Summary</span>
             <span className="text-red-600 font-bold text-sm">${cartState.totalPrice.toFixed(2)}</span>

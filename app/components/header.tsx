@@ -53,7 +53,7 @@ export default function Header({ variant, admin, backButton }: HeaderProps) {
                 alt="DoughBoy logo"
                 width={120}
                 height={60}
-                className="rounded-lg shadow-2xl w-20 h-10 md:w-32 md:h-16 lg:w-40 lg:h-20"
+                className="rounded-2xl shadow-2xl w-20 h-10 md:w-32 md:h-16 lg:w-40 lg:h-20"
               />
               <div className="hidden sm:flex sm:flex-col">
                 <h1 className="text-lg md:text-2xl font-bold text-gray-900">
@@ -115,7 +115,7 @@ export default function Header({ variant, admin, backButton }: HeaderProps) {
           alt="DoughBoy logo"
           width={120}
           height={60}
-          className="rounded-lg shadow-2xl w-20 h-10 md:w-32 md:h-16 lg:w-40 lg:h-20"
+          className="rounded-2xl shadow-2xl w-20 h-10 md:w-32 md:h-16 lg:w-40 lg:h-20"
         />
       </Link>
           <nav className="hidden md:flex space-x-8">

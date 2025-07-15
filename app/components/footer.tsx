@@ -24,7 +24,7 @@ export default function Footer({ variant }: FeaderProps) {
                   alt="DoughBoy logo"
                   width={200}
                   height={100}
-                  className="rounded-lg shadow-2xl"
+                  className="rounded-2xl shadow-2xl"
                 />
               </Link>
               <p className="text-gray-400">

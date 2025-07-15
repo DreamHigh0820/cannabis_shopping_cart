@@ -107,7 +107,7 @@ export default function BlogPage() {
                   alt={displayedPosts[0].title}
                   width={500}
                   height={300}
-                  className="w-full h-64 lg:h-full object-cover rounded-lg"
+                  className="w-full h-64 lg:h-full object-cover rounded-2xl"
                 />
               </div>
               <div className="lg:order-1 p-6">

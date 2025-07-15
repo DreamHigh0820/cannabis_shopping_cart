@@ -231,7 +231,7 @@ export default function ContactPage() {
 
                 {submitMessage && (
                   <div
-                    className={`p-3 sm:p-4 rounded-md text-sm sm:text-base ${
+                    className={`p-3 sm:p-4 rounded-lg text-sm sm:text-base ${
                       isSuccess ? "bg-red-50 text-red-800" : "bg-red-50 text-red-800"
                     }`}
                   >

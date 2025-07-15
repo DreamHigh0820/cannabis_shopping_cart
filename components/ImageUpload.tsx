@@ -89,7 +89,7 @@ export default function ImageUpload({
       {/* Image Preview */}
       {previewUrl ? (
         <div className="relative w-full max-w-sm">
-          <div className="relative aspect-square w-full rounded-lg overflow-hidden border">
+          <div className="relative aspect-square w-full rounded-2xl overflow-hidden border">
             <Image
               src={previewUrl}
               alt="Product preview"
@@ -133,7 +133,7 @@ export default function ImageUpload({
       ) : (
         /* Upload Area */
         <div 
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
+          className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center hover:border-gray-400 transition-colors cursor-pointer"
           onClick={handleUploadClick}
         >
           <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />

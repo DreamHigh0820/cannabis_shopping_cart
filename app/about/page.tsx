@@ -94,7 +94,7 @@ export default function AboutPage() {
                 width={600}
                 alt="Our Story"
                 height={400}
-                className="rounded-lg shadow-lg lg:w-[600px] w-full"
+                className="rounded-2xl shadow-lg lg:w-[600px] w-full"
               />
             </div>
           </div>

@@ -246,7 +246,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
   return (
     <div className="space-y-6">
       {/* Info Banner */}
-      {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      {/* <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
         <h3 className="text-blue-800 font-medium mb-2">☁️ Vercel Blob Storage</h3>
         <p className="text-blue-700 text-sm">
           Images are stored in Vercel Blob storage for both local development and production. Consistent everywhere!
@@ -255,7 +255,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
       {/* Validation Errors Display */}
       {validationErrors.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
           <h3 className="text-red-800 font-medium mb-2">Please fix the following errors:</h3>
           <ul className="list-disc list-inside text-red-700 text-sm space-y-1">
             {validationErrors.map((error, index) => (

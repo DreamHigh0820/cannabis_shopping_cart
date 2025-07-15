@@ -130,7 +130,7 @@ export default function CartPage() {
                               alt={item.name}
                               width={80}
                               height={80}
-                              className="rounded-md object-cover flex-shrink-0"
+                              className="rounded-lg object-cover flex-shrink-0"
                             />
                             <div className="flex-grow min-w-0">
                               <h3 className="font-semibold text-base leading-tight mb-1">{item.name}</h3>
@@ -192,7 +192,7 @@ export default function CartPage() {
                             alt={item.name}
                             width={80}
                             height={80}
-                            className="rounded-md object-cover flex-shrink-0"
+                            className="rounded-lg object-cover flex-shrink-0"
                           />
                           <div className="flex-grow min-w-0">
                             <h3 className="font-semibold text-base lg:text-lg">{item.name}</h3>

@@ -338,7 +338,7 @@ export default function MenuPage() {
 
         {/* Floating Cart Summary */}
         {cartState.totalItems > 0 && (
-          <div className="fixed bottom-4 right-4 left-4 sm:left-auto bg-white rounded-lg shadow-lg p-3 sm:p-4 border max-w-sm sm:max-w-none mx-auto sm:mx-0">
+          <div className="fixed bottom-4 right-4 left-4 sm:left-auto bg-white rounded-2xl shadow-lg p-3 sm:p-4 border max-w-sm sm:max-w-none mx-auto sm:mx-0">
             <div className="flex items-center justify-between mb-2 gap-x-2">
               <span className="font-semibold text-sm sm:text-base">Cart Summary</span>
               <span className="text-red-600 font-bold text-sm sm:text-base">${cartState.totalPrice.toFixed(2)}</span>

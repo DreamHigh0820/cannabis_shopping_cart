@@ -219,7 +219,7 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-red-100 rounded-lg text-red-600">{page.icon}</div>
+                      <div className="p-2 bg-red-100 rounded-2xl text-red-600">{page.icon}</div>
                       <CardTitle className="text-lg">{page.title}</CardTitle>
                     </div>
                   </div>

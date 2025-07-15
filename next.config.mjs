@@ -8,23 +8,16 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    // Add domains for images (NO protocol here)
+    // Add domains for images
     domains: [
-      'localhost',
-      'cannabis-shopping-cart.vercel.app', // Your Vercel domain (NO https://)
+      'cannabis-shopping-cart.vercel.app', // Your Vercel domain
     ],
-    // Allow Vercel Blob storage and local images
+    // Allow Vercel Blob storage for both local and production
     remotePatterns: [
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3000',
-        pathname: '/images/**',
-      },
-      {
         protocol: 'https',
-        hostname: 'cannabis-shopping-cart.vercel.app', // Your actual domain (NO https://)
-        pathname: '/images/**',
+        hostname: 'cannabis-shopping-cart.vercel.app', // Your actual domain
+        pathname: '/**',
       },
       {
         protocol: 'https',

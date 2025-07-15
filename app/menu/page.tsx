@@ -242,8 +242,8 @@ export default function MenuPage() {
                   </p>
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex flex-col min-h-[3rem] justify-center">
-                      <span className="text-lg sm:text-2xl font-bold text-green-600">
-                        ${product.price}
+                      <span className="text-lg sm:text-xl font-bold text-green-600">
+                        LB: ${product.price}
                       </span>
                       <span className="text-sm text-gray-500 min-h-[1.25rem]">
                         {product.isQP && product.qpPrice ? `QP: ${product.qpPrice}` : ''}

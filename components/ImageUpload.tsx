@@ -72,6 +72,14 @@ export default function ImageUpload({
     fileInputRef.current?.click()
   }
 
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
   return (
     <div className="space-y-4">
       <Label className="text-sm font-medium">
@@ -105,10 +113,21 @@ export default function ImageUpload({
           >
             <X className="h-4 w-4" />
           </Button>
+          
+          {/* File Info */}
           {selectedFile && (
-            <p className="text-xs text-gray-500 mt-2">
-              Ready to upload: {selectedFile.name}
-            </p>
+            <div className="text-xs text-gray-500 mt-2 space-y-1">
+              <p>📄 Ready to upload: {selectedFile.name}</p>
+              <p>📊 Size: {formatFileSize(selectedFile.size)}</p>
+              <p>☁️ Will be stored in Vercel Blob</p>
+            </div>
+          )}
+          
+          {/* Existing Image Info */}
+          {currentImage && !selectedFile && (
+            <div className="text-xs text-gray-500 mt-2">
+              <p>☁️ Stored in Vercel Blob</p>
+            </div>
           )}
         </div>
       ) : (
@@ -123,6 +142,9 @@ export default function ImageUpload({
           </p>
           <p className="text-xs text-gray-500">
             PNG, JPG, WebP up to 5MB
+          </p>
+          <p className="text-xs text-blue-500 mt-1">
+            ☁️ Stored in Vercel Blob
           </p>
         </div>
       )}

@@ -89,7 +89,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     setSelectedImageFile(file)
   }
 
-  // Upload image to server
+  // Upload image to Vercel Blob
   const uploadImage = async (file: File): Promise<string> => {
     const formData = new FormData()
     formData.append('file', file)
@@ -177,22 +177,22 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     }
 
     setUploading(true)
-    let finalImageUrl = imageUrl || "" // Default to empty string if no image
+    let finalImageUrl = imageUrl || ""
     let uploadedImageUrl: string | null = null
 
     try {
-      // Step 1: Upload image if a new file is selected
+      // Step 1: Upload image to Vercel Blob if a new file is selected
       if (selectedImageFile) {
-        toast.loading('Uploading image...', { id: 'upload' })
+        toast.loading('Uploading to Vercel Blob...', { id: 'upload' })
         uploadedImageUrl = await uploadImage(selectedImageFile)
         finalImageUrl = uploadedImageUrl
         toast.success('Image uploaded successfully!', { id: 'upload' })
       }
 
-      // Step 2: Prepare product data with final image URL (can be empty for editing)
+      // Step 2: Prepare product data with final image URL
       const submitData = {
         ...data,
-        image: finalImageUrl // This can be empty string for editing
+        image: finalImageUrl
       }
 
       // Step 3: Submit product data
@@ -245,6 +245,14 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
   return (
     <div className="space-y-6">
+      {/* Info Banner */}
+      {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="text-blue-800 font-medium mb-2">☁️ Vercel Blob Storage</h3>
+        <p className="text-blue-700 text-sm">
+          Images are stored in Vercel Blob storage for both local development and production. Consistent everywhere!
+        </p>
+      </div> */}
+
       {/* Validation Errors Display */}
       {validationErrors.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -422,7 +430,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
             {selectedImageFile && (
               <p className="text-sm text-blue-600">
-                ✓ New image selected: {selectedImageFile.name} (will be uploaded when you save)
+                ✓ New image selected: {selectedImageFile.name} (will be uploaded to Vercel Blob when you save)
               </p>
             )}
           </div>

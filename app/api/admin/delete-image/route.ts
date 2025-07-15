@@ -1,8 +1,6 @@
 // /app/api/admin/delete-image/route.ts
 import { NextResponse } from "next/server"
 import { del } from '@vercel/blob'
-import { unlink } from "fs/promises"
-import { join } from "path"
 
 export async function POST(request: Request) {
   try {
@@ -15,22 +13,17 @@ export async function POST(request: Request) {
       )
     }
     
-    const isProduction = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production' || process.env.FORCE_BLOB === 'true'
+    // Only delete Vercel Blob URLs
+    if (!imageUrl.includes('blob.vercel-storage.com')) {
+      return NextResponse.json(
+        { success: false, message: "Can only delete Vercel Blob storage images" },
+        { status: 400 }
+      )
+    }
     
     try {
-      if (isProduction) {
-        // In production, only delete Vercel Blob URLs
-        if (imageUrl.startsWith('https://') && imageUrl.includes('blob.vercel-storage.com')) {
-          await del(imageUrl)
-        }
-      } else {
-        // In development, delete local files
-        if (imageUrl.startsWith('/images/products/')) {
-          const filename = imageUrl.replace('/images/products/', '')
-          const filePath = join(process.cwd(), 'public', 'images', 'products', filename)
-          await unlink(filePath)
-        }
-      }
+      // Delete from Vercel Blob
+      await del(imageUrl)
       
       return NextResponse.json({
         success: true,

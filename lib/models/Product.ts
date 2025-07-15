@@ -1,7 +1,5 @@
-
 export interface Product {
-  _id?: string
-  id: number
+  _id?: string // MongoDB ObjectId as string
   code: string // e.g., XXYY##
   name: string
   category: string
@@ -17,6 +15,7 @@ export interface Product {
   updatedAt?: Date
   isQP?: boolean
   qpPrice?: number
+  rating?: number // Add rating for the menu page
 }
 
 export interface BlogPost {

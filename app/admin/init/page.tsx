@@ -55,7 +55,7 @@ export default function InitPage() {
               </div>
             )}
 
-            <div className="text-xs text-gray-500 space-y-1 pt-4 border-t">
+            {/* <div className="text-xs text-gray-500 space-y-1 pt-4 border-t">
               <p>
                 <strong>Environment Setup:</strong>
               </p>
@@ -67,7 +67,7 @@ export default function InitPage() {
                 <br />
                 TELEGRAM_CHAT_ID=your_chat_id
               </code>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

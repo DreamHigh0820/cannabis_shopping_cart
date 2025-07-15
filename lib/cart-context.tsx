@@ -4,14 +4,15 @@ import type React from "react"
 import { createContext, useContext, useReducer, useEffect } from "react"
 
 export interface CartItem {
-  id: string // Use product ID
+  id: string // Use product _id (ObjectId as string)
   name: string
   category: string
-  price: number
+  price: number // This will be the effective price (QP price for QP products, regular price for lb products)
   quantity: number
   image: string
-  isQP: boolean
-  qpPrice: number
+  isQP?: boolean
+  qpPrice?: number
+  unit?: string // 'QP' or 'lb'
 }
 
 interface CartState {
@@ -43,47 +44,73 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "ADD_ITEM": {
       const existingItem = state.items.find((item) => item.id === action.payload.id)
       let newItems: CartItem[]
+      
       if (existingItem) {
         newItems = state.items.map((item) =>
-          item.id === action.payload.id ? { ...item, quantity: item.quantity + action.payload.quantity } : item,
+          item.id === action.payload.id 
+            ? { ...item, quantity: item.quantity + action.payload.quantity } 
+            : item,
         )
       } else {
         newItems = [...state.items, action.payload]
       }
+      
       const totalItems = newItems.reduce((sum, item) => sum + item.quantity, 0)
-      const totalPrice = newItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      const totalPrice = newItems.reduce((sum, item) => {
+        // Use the price field which now contains the effective price
+        return sum + item.price * item.quantity
+      }, 0)
+      
       return { ...state, items: newItems, totalItems, totalPrice }
     }
+    
     case "UPDATE_QUANTITY": {
       const newItems = state.items
-        .map((item) => (item.id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item))
+        .map((item) => 
+          item.id === action.payload.id 
+            ? { ...item, quantity: action.payload.quantity } 
+            : item
+        )
         .filter((item) => item.quantity > 0) // Remove if quantity is 0
+      
       const totalItems = newItems.reduce((sum, item) => sum + item.quantity, 0)
-      const totalPrice = newItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      const totalPrice = newItems.reduce((sum, item) => {
+        return sum + item.price * item.quantity
+      }, 0)
+      
       return { ...state, items: newItems, totalItems, totalPrice }
     }
+    
     case "REMOVE_ITEM": {
       const newItems = state.items.filter((item) => item.id !== action.payload.id)
       const totalItems = newItems.reduce((sum, item) => sum + item.quantity, 0)
-      const totalPrice = newItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      const totalPrice = newItems.reduce((sum, item) => {
+        return sum + item.price * item.quantity
+      }, 0)
+      
       return { ...state, items: newItems, totalItems, totalPrice }
     }
+    
     case "CLEAR_CART": {
-      // Keep shipping/payment choices
       return { ...state, items: [], totalItems: 0, totalPrice: 0 }
     }
+    
     case "LOAD_CART": {
       return action.payload
     }
+    
     case "SET_SHIPPING_CARRIER": {
       return { ...state, shippingCarrier: action.payload }
     }
+    
     case "SET_SHIPPING_SPEED": {
       return { ...state, shippingSpeed: action.payload }
     }
+    
     case "SET_PAYMENT_METHOD": {
       return { ...state, paymentMethod: action.payload }
     }
+    
     default:
       return state
   }
@@ -93,9 +120,9 @@ const initialState: CartState = {
   items: [],
   totalItems: 0,
   totalPrice: 0,
-  shippingCarrier: "ups", // Default carrier
-  shippingSpeed: "ground", // Default speed
-  paymentMethod: "BTC", // Default payment
+  shippingCarrier: "ups",
+  shippingSpeed: "ground",
+  paymentMethod: "BTC",
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {

@@ -1,16 +1,38 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Leaf, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
-import { Product, BlogPost } from "@/lib/models"
+import ProductImage from "@/components/ProductImage"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
+
+interface Product {
+  _id: string
+  name: string
+  category: string
+  price: number
+  image: string
+  rating?: number
+  description: string
+  strain?: string
+  isQP?: boolean
+  qpPrice?: number
+  featured?: boolean
+}
+
+interface BlogPost {
+  _id: string
+  title: string
+  excerpt: string
+  image: string
+  date: string
+  featured?: boolean
+}
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
@@ -20,22 +42,28 @@ export default function HomePage() {
 
   const { state: cartState, dispatch: cartDispatch } = useCart()
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: Product) => {
+    const isQPProduct = product.isQP && product.qpPrice
+    const effectivePrice = isQPProduct ? product.qpPrice : product.price
+    const unit = isQPProduct ? 'QP' : 'lb'
+    
     cartDispatch({
       type: "ADD_ITEM",
       payload: {
-        id: product.id,
+        id: product._id,
         name: product.name,
         category: product.category,
-        price: product.price,
+        price: effectivePrice, // Use effective price based on unit type
         image: product.image,
-        isQP: product.isQP,
-        qpPrice: product.qpPrice,
         quantity: 1,
+        isQP: isQPProduct,
+        qpPrice: product.qpPrice,
+        unit: unit, // Add unit information
       },
     })
 
-    setNotification(`${product.name} added to cart!`)
+    const unitText = isQPProduct ? "QP" : "lb"
+    setNotification(`${product.name} (1 ${unitText}) added to cart!`)
     setTimeout(() => setNotification(null), 3000)
   }
 
@@ -44,15 +72,24 @@ export default function HomePage() {
       try {
         // Fetch featured products
         const productsResponse = await fetch("/api/products")
-        const allProducts = await productsResponse.json()
-        const featured = allProducts.filter((product: Product) => product.featured).slice(0, 4)
-        setFeaturedProducts(featured)
+        if (productsResponse.ok) {
+          const allProducts = await productsResponse.json()
+          const featured = allProducts.filter((product: Product) => product.featured).slice(0, 4)
+          setFeaturedProducts(featured)
+        }
 
-        // Fetch featured blog posts
-        const blogResponse = await fetch("/api/blog")
-        const allPosts = await blogResponse.json()
-        const featuredPosts = allPosts.filter((post: BlogPost) => post.featured).slice(0, 3)
-        setBlogPosts(featuredPosts)
+        // Fetch featured blog posts (if you have blog API)
+        try {
+          const blogResponse = await fetch("/api/blog")
+          if (blogResponse.ok) {
+            const allPosts = await blogResponse.json()
+            const featuredPosts = allPosts.filter((post: BlogPost) => post.featured).slice(0, 3)
+            setBlogPosts(featuredPosts)
+          }
+        } catch (blogError) {
+          console.log("Blog API not available, skipping blog posts")
+          setBlogPosts([]) // Set empty array if blog API doesn't exist
+        }
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
@@ -118,8 +155,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <Image
-                // src="/placeholder.svg"
+              <ProductImage
                 src="https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"
                 alt="Premium Cannabis Products"
                 width={400}
@@ -137,10 +173,10 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-center mb-12">Shop by Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { name: "Flowers", icon: "🌸", description: "Premium indoor & outdoor strains" },
-              { name: "Vapes", icon: "💨", description: "Cartridges & disposable pens" },
-              { name: "Edibles", icon: "🍯", description: "Gummies, chocolates & more" },
-              { name: "Extracts", icon: "💎", description: "Concentrates & live rosin" },
+              { name: "Flower", icon: "🌸", description: "Premium indoor & outdoor strains" },
+              { name: "Vape", icon: "💨", description: "Cartridges & disposable pens" },
+              { name: "Edible", icon: "🍯", description: "Gummies, chocolates & more" },
+              { name: "Concentrate", icon: "💎", description: "Concentrates & live rosin" },
             ].map((category, index) => (
               <Link href={`/menu?category=${category.name.toLowerCase()}`} key={index}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
@@ -163,101 +199,132 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold mb-4">Featured Products</h2>
             <p className="text-gray-600">Hand-picked favorites from our premium collection</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="p-0">
-                  <Image
-                    // src={product.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-                    alt={product.name}
-                    width={400}
-                    height={400}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    priority={index < 4} // Load first 4 images with priority
-                  />
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <Badge variant="secondary" className="mb-2">
-                      {product.category}
-                    </Badge>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      {/* <span className="text-sm text-gray-600 ml-1">{product.rating}</span> */}
+          {featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {featuredProducts.map((product) => (
+                <Card key={product._id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="p-0">
+                    <ProductImage
+                      src={product.image}
+                      alt={product.name}
+                      width={400}
+                      height={400}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <Badge variant="secondary" className="mb-2 capitalize">
+                        {product.category}
+                      </Badge>
+                      <div className="flex items-center">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
+                      </div>
                     </div>
-                  </div>
-                  <h3 className="font-semibold mb-2">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mb-6 min-h-20 line-clamp-4">
-                    {product.description}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-green-600">${product.price}</span>
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => addToCart(product)}>
+                    <h3 className="font-semibold mb-2">{product.name}</h3>
+                    <p className="text-sm text-gray-600 mb-4 min-h-16 line-clamp-3">
+                      {product.description}
+                    </p>
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex flex-col">
+                        {product.isQP && product.qpPrice ? (
+                          <>
+                            <span className="text-lg font-bold text-green-600">
+                              ${product.qpPrice}/QP
+                            </span>
+                            <span className="text-sm text-gray-500 line-through">
+                              ${product.price}/lb
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-lg font-bold text-green-600">
+                            ${product.price}/lb
+                          </span>
+                        )}
+                      </div>
+                      {product.isQP && (
+                        <Badge variant="outline" className="text-xs">
+                          QP Deal
+                        </Badge>
+                      )}
+                    </div>
+                    <Button 
+                      size="sm" 
+                      className="w-full bg-green-600 hover:bg-green-700" 
+                      onClick={() => addToCart(product)}
+                    >
                       Add to Cart
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-gray-600 mb-4">No featured products available at the moment.</p>
+              <Link href="/menu">
+                <Button className="bg-green-600 hover:bg-green-700">
+                  Browse All Products
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Blog Section */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Latest from Our Blog</h2>
-            <p className="text-gray-600">Stay informed with the latest cannabis news and education</p>
+      {blogPosts.length > 0 && (
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Latest from Our Blog</h2>
+              <p className="text-gray-600">Stay informed with the latest cannabis news and education</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogPosts.map((post) => (
+                <Card key={post._id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader className="p-0">
+                    <ProductImage
+                      src={post.image}
+                      alt={post.title}
+                      width={250}
+                      height={150}
+                      className="w-full h-40 object-cover rounded-t-lg"
+                    />
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="text-sm text-gray-500 mb-2">{post.date}</div>
+                    <h3 className="font-semibold mb-2">{post.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
+                    <Link href={`/blog/${post._id}`} className="text-green-600 hover:text-green-700 font-medium">
+                      Read More →
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <Link href="/blog">
+                <Button variant="outline" size="lg">
+                  View All Posts
+                </Button>
+              </Link>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogPosts.map((post, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="p-0">
-                  <Image
-                    // src={post.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-                    alt={post.title}
-                    width={250}
-                    height={150}
-                    className="w-full h-40 object-cover rounded-t-lg"
-                  />
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="text-sm text-gray-500 mb-2">{post.date}</div>
-                  <h3 className="font-semibold mb-2">{post.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
-                  {/* <Link href={`/blog/${post.id}`} className="text-green-600 hover:text-green-700 font-medium"> */}
-                  <Link href={`/`} className="text-green-600 hover:text-green-700 font-medium">
-                    Read More →
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            {/* <Link href="/blog"> */}
-            <Link href="/">
-              <Button variant="outline" size="lg">
-                View All Posts
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Floating Cart Summary */}
       {cartState.totalItems > 0 && (
-        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50">
-          <div className="flex items-center justify-between mb-2 gap-x-1">
-            <span className="font-semibold">Cart Summary</span>
-            <span className="text-green-600 font-bold">${cartState.totalPrice.toFixed(2)}</span>
+        <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50 max-w-sm">
+          <div className="flex items-center justify-between mb-2 gap-x-2">
+            <span className="font-semibold text-sm">Cart Summary</span>
+            <span className="text-green-600 font-bold text-sm">${cartState.totalPrice.toFixed(2)}</span>
           </div>
-          <p className="text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
+          <p className="text-xs text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
           <Link href="/cart">
-            <Button className="w-full bg-green-600 hover:bg-green-700">View Cart</Button>
+            <Button className="w-full bg-green-600 hover:bg-green-700 text-sm py-2">View Cart</Button>
           </Link>
         </div>
       )}

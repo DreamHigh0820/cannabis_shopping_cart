@@ -3,7 +3,6 @@
 import React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -11,36 +10,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Star, Plus, Minus, Filter } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
+import ProductImage from "@/components/ProductImage"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
 
 interface Product {
-  id: number
+  _id: string
   name: string
   category: string
   price: number
   image: string
-  rating: number
+  rating?: number
   description: string
   strain?: string
+  isQP?: boolean
+  qpPrice?: number
 }
 
 export default function MenuPage() {
   const [sortBy, setSortBy] = useState("name")
-  const [selectedQuantities, setSelectedQuantities] = useState<{ [key: number]: number }>({})
+  const [selectedQuantities, setSelectedQuantities] = useState<{ [key: string]: number }>({})
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(12)
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") || "all")
   const { state: cartState, dispatch: cartDispatch } = useCart()
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch("/api/products")
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
         const data = await response.json()
+        // API now returns array directly
         setProducts(data)
       } catch (error) {
         console.error("Error fetching products:", error)
@@ -53,17 +59,17 @@ export default function MenuPage() {
   }, [])
 
   const filteredProducts = products.filter(
-    (product: any) => selectedCategory === "all" || product.category === selectedCategory,
+    (product) => selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase(),
   )
 
-  const sortedProducts = [...filteredProducts].sort((a: any, b: any) => {
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "price-low":
         return a.price - b.price
       case "price-high":
         return b.price - a.price
       case "rating":
-        return b.rating - a.rating
+        return (b.rating || 0) - (a.rating || 0)
       default:
         return a.name.localeCompare(b.name)
     }
@@ -84,7 +90,7 @@ export default function MenuPage() {
     }
   }, [searchParams])
 
-  const updateQuantity = (productId: number, change: number) => {
+  const updateQuantity = (productId: string, change: number) => {
     setSelectedQuantities((prev) => {
       const currentQty = prev[productId] || 1
       const newQty = Math.max(1, currentQty + change)
@@ -93,20 +99,27 @@ export default function MenuPage() {
   }
 
   const addToCart = (product: Product) => {
-    const quantity = selectedQuantities[product.id] || 1
+    const quantity = selectedQuantities[product._id] || 1
+    const isQPProduct = product.isQP && product.qpPrice
+    const effectivePrice = isQPProduct ? product.qpPrice : product.price
+    const unit = isQPProduct ? 'QP' : 'lb'
+    
     cartDispatch({
       type: "ADD_ITEM",
       payload: {
-        id: product.id,
+        id: product._id,
         name: product.name,
         category: product.category,
-        price: product.price,
+        price: effectivePrice, // Use the effective price based on unit type
         image: product.image,
-        quantity: quantity
+        quantity: quantity,
+        isQP: isQPProduct,
+        qpPrice: product.qpPrice,
+        unit: unit, // Add unit information
       },
     })
 
-    setSelectedQuantities((prev) => ({ ...prev, [product.id]: 1 }))
+    setSelectedQuantities((prev) => ({ ...prev, [product._id]: 1 }))
   }
 
   if (loading) {
@@ -144,10 +157,10 @@ export default function MenuPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="flowers">Flowers</SelectItem>
-                  <SelectItem value="vapes">Vapes</SelectItem>
-                  <SelectItem value="edibles">Edibles</SelectItem>
-                  <SelectItem value="extracts">Extracts</SelectItem>
+                  <SelectItem value="flower">Flower</SelectItem>
+                  <SelectItem value="vape">Vape</SelectItem>
+                  <SelectItem value="edible">Edible</SelectItem>
+                  <SelectItem value="concentrate">Concentrate</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -200,13 +213,13 @@ export default function MenuPage() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {paginatedProducts.map((product: any, index) => {
-            const selectedQty = selectedQuantities[product.id] || 1
+          {paginatedProducts.map((product) => {
+            const selectedQty = selectedQuantities[product._id] || 1
             return (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card key={product._id} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
-                  <Image
-                    src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+                  <ProductImage
+                    src={product.image}
                     alt={product.name}
                     width={400}
                     height={400}
@@ -220,7 +233,7 @@ export default function MenuPage() {
                     </Badge>
                     <div className="flex items-center">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-gray-600 ml-1">{product.rating}</span>
+                      <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
                     </div>
                   </div>
                   <h3 className="font-semibold mb-2 text-sm sm:text-base line-clamp-2">{product.name}</h3>
@@ -228,21 +241,33 @@ export default function MenuPage() {
                     {product.description}
                   </p>
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-lg sm:text-2xl font-bold text-green-600">${product.price}</span>
+                    <div className="flex flex-col min-h-[3rem] justify-center">
+                      <span className="text-lg sm:text-2xl font-bold text-green-600">
+                        ${product.price}
+                      </span>
+                      <span className="text-sm text-gray-500 min-h-[1.25rem]">
+                        {product.isQP && product.qpPrice ? `QP: ${product.qpPrice}` : ''}
+                      </span>
+                    </div>
                     <div className="flex items-center space-x-1 sm:space-x-2">
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        onClick={() => updateQuantity(product.id, -1)}
+                        onClick={() => updateQuantity(product._id, -1)}
                         className="h-8 w-8 p-0 sm:h-auto sm:w-auto sm:p-2"
                       >
                         <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
                       </Button>
-                      <span className="font-medium w-6 sm:w-8 text-center text-sm sm:text-base">{selectedQty}</span>
+                      <div className="flex flex-col items-center">
+                        <span className="font-medium w-6 sm:w-8 text-center text-sm sm:text-base">{selectedQty}</span>
+                        <span className="text-xs text-gray-500">
+                          {product.isQP ? 'QP' : 'lb'}
+                        </span>
+                      </div>
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        onClick={() => updateQuantity(product.id, 1)}
+                        onClick={() => updateQuantity(product._id, 1)}
                         className="h-8 w-8 p-0 sm:h-auto sm:w-auto sm:p-2"
                       >
                         <Plus className="h-3 w-3 sm:h-4 sm:w-4" />

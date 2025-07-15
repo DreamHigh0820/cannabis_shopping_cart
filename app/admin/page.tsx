@@ -122,24 +122,24 @@ export default function AdminDashboard() {
   }
 
   const adminPages = [
-    {
-      title: "Database Management",
-      description: "Initialize database with sample data",
-      icon: <Database className="h-6 w-6" />,
-      href: "/admin/init",
-      status: systemStatus.database,
-      badge: "Initialize",
-      requiredRole: "admin",
-    },
-    {
-      title: "Telegram Dashboard",
-      description: "Manage Telegram bot and send messages",
-      icon: <MessageCircle className="h-6 w-6" />,
-      href: "/admin/telegram",
-      status: systemStatus.telegram,
-      badge: systemStatus.telegram === "configured" ? "Active" : "Setup Required",
-      requiredRole: "admin",
-    },
+    // {
+    //   title: "Database Management",
+    //   description: "Initialize database with sample data",
+    //   icon: <Database className="h-6 w-6" />,
+    //   href: "/admin/init",
+    //   status: systemStatus.database,
+    //   badge: "Initialize",
+    //   requiredRole: "admin",
+    // },
+    // {
+    //   title: "Telegram Dashboard",
+    //   description: "Manage Telegram bot and send messages",
+    //   icon: <MessageCircle className="h-6 w-6" />,
+    //   href: "/admin/telegram",
+    //   status: systemStatus.telegram,
+    //   badge: systemStatus.telegram === "configured" ? "Active" : "Setup Required",
+    //   requiredRole: "admin",
+    // },
     {
       title: "Products Manager",
       description: "Add, edit, and manage product inventory",
@@ -167,15 +167,15 @@ export default function AdminDashboard() {
       badge: "Coming Soon",
       requiredRole: "admin",
     },
-    {
-      title: "Orders Dashboard",
-      description: "View and manage customer orders",
-      icon: <BarChart3 className="h-6 w-6" />,
-      href: "/admin/orders",
-      status: "planned",
-      badge: "Coming Soon",
-      requiredRole: "admin",
-    },
+    // {
+    //   title: "Orders Dashboard",
+    //   description: "View and manage customer orders",
+    //   icon: <BarChart3 className="h-6 w-6" />,
+    //   href: "/admin/orders",
+    //   status: "planned",
+    //   badge: "Coming Soon",
+    //   requiredRole: "admin",
+    // },
   ]
 
   const hasPermission = (requiredRole: string) => {

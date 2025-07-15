@@ -11,11 +11,14 @@ interface CalculationInputs {
 }
 
 export function useCartCalculations({ items, shippingCarrier, shippingSpeed, paymentMethod }: CalculationInputs) {
-  const calculations = useMemo(() => {
+  return useMemo(() => {
+    // Calculate subtotal using the price field (which now contains the effective price)
     const subtotal = items.reduce((acc, item) => acc + item.price * item.quantity, 0)
 
-    // Volume Discount for "Flower by the Pound"
-    const poundItems = items.filter((item) => item.category === "pound")
+    // Volume Discount for "Flower by the Pound" (Flower category items that are NOT QP)
+    const poundItems = items.filter((item) => 
+      item.category.toLowerCase() === "flower" && !item.isQP
+    )
     const poundItemCount = poundItems.reduce((acc, item) => acc + item.quantity, 0)
     let volumeDiscount = 0
     if (poundItemCount > 0) {
@@ -23,8 +26,10 @@ export function useCartCalculations({ items, shippingCarrier, shippingSpeed, pay
       volumeDiscount = poundItemCount * discountPerUnit
     }
 
-    // Shipping Coupon for QP Flowers
-    const qpFlowerItems = items.filter((item) => item.category === "flowers")
+    // Shipping Coupon for QP Flowers (Flower category items that ARE QP)
+    const qpFlowerItems = items.filter((item) => 
+      item.category.toLowerCase() === "flower" && item.isQP
+    )
     const qpFlowerCount = qpFlowerItems.reduce((acc, item) => acc + item.quantity, 0)
     const requiredShippingCharges = Math.ceil(qpFlowerCount / 4)
     const paidShippingCharges = qpFlowerCount
@@ -35,11 +40,13 @@ export function useCartCalculations({ items, shippingCarrier, shippingSpeed, pay
     let shippingUpgradeCost = 0
     if (shippingCarrier && shippingSpeed) {
       items.forEach((item) => {
-        if (item.category === "flowers") {
+        const category = item.category.toLowerCase()
+        
+        if (category === "flower") {
           if (shippingCarrier === "ups" && shippingSpeed === "2-day") shippingUpgradeCost += 50 * item.quantity
           if (shippingCarrier === "ups" && shippingSpeed === "overnight") shippingUpgradeCost += 100 * item.quantity
           if (shippingCarrier === "usps" && shippingSpeed === "express") shippingUpgradeCost += 50 * item.quantity
-        } else if (item.category === "vapes") {
+        } else if (category === "vape") {
           if (shippingCarrier === "ups" && shippingSpeed === "2-day") shippingUpgradeCost += 0.5 * item.quantity
           if (shippingCarrier === "ups" && shippingSpeed === "overnight") shippingUpgradeCost += 1 * item.quantity
           if (shippingCarrier === "usps" && shippingSpeed === "express") shippingUpgradeCost += 0.5 * item.quantity
@@ -49,7 +56,7 @@ export function useCartCalculations({ items, shippingCarrier, shippingSpeed, pay
 
     const totalBeforeUpcharge = subtotal - volumeDiscount - shippingDiscount + shippingUpgradeCost
 
-    // Payment Method Upcharge
+    // Payment Method Upcharge (3% for CashApp or Zelle)
     let paymentUpcharge = 0
     if (paymentMethod === "CashApp" || paymentMethod === "Zelle") {
       paymentUpcharge = totalBeforeUpcharge * 0.03
@@ -67,6 +74,4 @@ export function useCartCalculations({ items, shippingCarrier, shippingSpeed, pay
       qpFlowerCount,
     }
   }, [items, shippingCarrier, shippingSpeed, paymentMethod])
-
-  return calculations
 }

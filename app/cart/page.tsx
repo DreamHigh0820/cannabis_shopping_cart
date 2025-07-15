@@ -2,7 +2,6 @@
 
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X, Plus, Minus, ShoppingCart } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
 import { useCartCalculations } from "@/hooks/use-cart-calculations"
+import ProductImage from "@/components/ProductImage"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
 import BackButton from "@/components/BackButton"
@@ -51,6 +51,32 @@ export default function CartPage() {
     cartDispatch({ type: "SET_PAYMENT_METHOD", payload: value })
   }
 
+  // Helper function to get price display
+  const getPriceDisplay = (item: any) => {
+    const unit = item.unit || (item.isQP ? 'QP' : 'lb')
+    return (
+      <div className="text-sm">
+        <p className="font-medium">${item.price.toFixed(2)}/{unit}</p>
+        {item.isQP && item.qpPrice && (
+          <p className="text-xs text-gray-500">
+            QP pricing applied
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  // Check if all required fields are selected
+  const isFormValid = shippingCarrier && shippingSpeed && paymentMethod
+
+  // Handle checkout button click
+  const handleCheckoutClick = (e: React.MouseEvent) => {
+    if (!isFormValid) {
+      e.preventDefault()
+      console.log("Please complete all required fields")
+    }
+  }
+
   if (cartState.items.length === 0) {
     return (
       <div className="bg-gray-50">
@@ -73,8 +99,6 @@ export default function CartPage() {
             </CardContent>
           </Card>
         </main>
-
-        {/* Footer */}
         <Footer variant="public" />
       </div>
     )
@@ -94,110 +118,129 @@ export default function CartPage() {
             <Card>
               <CardContent className="p-0">
                 <div className="divide-y">
-                  {cartState.items.map((item, index) => (
-                    <div key={index} className="p-4 sm:p-6">
-                      {/* Mobile Layout */}
-                      <div className="block sm:hidden">
-                        <div className="flex items-start gap-3 mb-3">
-                          <Image
-                            src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
+                  {cartState.items.map((item, index) => {
+                    const unit = item.unit || (item.isQP ? 'QP' : 'lb')
+                    return (
+                      <div key={index} className="p-4 sm:p-6">
+                        {/* Mobile Layout */}
+                        <div className="block sm:hidden">
+                          <div className="flex items-start gap-3 mb-3">
+                            <ProductImage
+                              src={item.image}
+                              alt={item.name}
+                              width={80}
+                              height={80}
+                              className="rounded-md object-cover flex-shrink-0"
+                            />
+                            <div className="flex-grow min-w-0">
+                              <h3 className="font-semibold text-base leading-tight mb-1">{item.name}</h3>
+                              <p className="text-sm text-gray-500 capitalize mb-1">{item.category}</p>
+                              {getPriceDisplay(item)}
+                              {item.isQP && (
+                                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-1">
+                                  QP Unit
+                                </span>
+                              )}
+                            </div>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => removeItem(item.id)}
+                              className="flex-shrink-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="h-8 w-8"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </Button>
+                              <div className="flex flex-col items-center">
+                                <Input
+                                  type="number"
+                                  value={item.quantity}
+                                  onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
+                                  className="w-12 h-8 text-center text-sm"
+                                />
+                                <span className="text-xs text-gray-500">{unit}</span>
+                              </div>
+                              <Button
+                                size="icon"
+                                variant="outline"
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="h-8 w-8"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
+                            </div>
+                            <p className="font-semibold text-right">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Desktop Layout */}
+                        <div className="hidden sm:flex items-center gap-4">
+                          <ProductImage
+                            src={item.image}
                             alt={item.name}
                             width={80}
                             height={80}
                             className="rounded-md object-cover flex-shrink-0"
                           />
                           <div className="flex-grow min-w-0">
-                            <h3 className="font-semibold text-base leading-tight mb-1">{item.name}</h3>
-                            <p className="text-sm text-gray-500 capitalize mb-1">{item.category}</p>
-                            <p className="text-sm font-medium">${item.price.toFixed(2)}</p>
+                            <h3 className="font-semibold text-base lg:text-lg">{item.name}</h3>
+                            <p className="text-sm text-gray-500 capitalize">{item.category}</p>
+                            {getPriceDisplay(item)}
+                            {item.isQP && (
+                              <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-1">
+                                QP Unit
+                              </span>
+                            )}
                           </div>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => removeItem(item.id)}
-                            className="flex-shrink-0"
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Button
                               size="icon"
                               variant="outline"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              className="h-8 w-8"
+                              className="h-8 w-8 lg:h-10 lg:w-10"
                             >
-                              <Minus className="h-3 w-3" />
+                              <Minus className="h-3 w-3 lg:h-4 lg:w-4" />
                             </Button>
-                            <Input
-                              type="number"
-                              value={item.quantity}
-                              onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
-                              className="w-12 h-8 text-center text-sm"
-                            />
+                            <div className="flex flex-col items-center">
+                              <Input
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
+                                className="w-12 lg:w-16 text-center h-8 lg:h-10"
+                              />
+                              <span className="text-xs text-gray-500">{unit}</span>
+                            </div>
                             <Button
                               size="icon"
                               variant="outline"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              className="h-8 w-8"
+                              className="h-8 w-8 lg:h-10 lg:w-10"
                             >
-                              <Plus className="h-3 w-3" />
+                              <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
                             </Button>
                           </div>
-                          <p className="font-semibold text-right">
+                          <p className="font-semibold w-16 lg:w-20 text-right">
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
-                        </div>
-                      </div>
-
-                      {/* Desktop Layout */}
-                      <div className="hidden sm:flex items-center gap-4">
-                        <Image
-                          src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
-                          alt={item.name}
-                          width={80}
-                          height={80}
-                          className="rounded-md object-cover flex-shrink-0"
-                        />
-                        <div className="flex-grow min-w-0">
-                          <h3 className="font-semibold text-base lg:text-lg">{item.name}</h3>
-                          <p className="text-sm text-gray-500 capitalize">{item.category}</p>
-                          <p className="text-sm font-medium">${item.price.toFixed(2)}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="h-8 w-8 lg:h-10 lg:w-10"
-                          >
-                            <Minus className="h-3 w-3 lg:h-4 lg:w-4" />
-                          </Button>
-                          <Input
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value, 10))}
-                            className="w-12 lg:w-16 text-center h-8 lg:h-10"
-                          />
-                          <Button
-                            size="icon"
-                            variant="outline"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="h-8 w-8 lg:h-10 lg:w-10"
-                          >
-                            <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
+                          <Button size="icon" variant="ghost" onClick={() => removeItem(item.id)}>
+                            <X className="h-4 w-4 lg:h-5 lg:w-5" />
                           </Button>
                         </div>
-                        <p className="font-semibold w-16 lg:w-20 text-right">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </p>
-                        <Button size="icon" variant="ghost" onClick={() => removeItem(item.id)}>
-                          <X className="h-4 w-4 lg:h-5 lg:w-5" />
-                        </Button>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -212,9 +255,11 @@ export default function CartPage() {
               <CardContent className="space-y-4">
                 {/* Shipping Selection */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Shipping Carrier</Label>
+                  <Label className="text-sm font-medium">
+                    Shipping Carrier <span className="text-red-500">*</span>
+                  </Label>
                   <Select onValueChange={handleCarrierChange} value={shippingCarrier || ""}>
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger className={`h-10 ${!shippingCarrier ? 'border-red-300' : ''}`}>
                       <SelectValue placeholder="Select Carrier" />
                     </SelectTrigger>
                     <SelectContent>
@@ -226,9 +271,11 @@ export default function CartPage() {
 
                 {shippingCarrier && (
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">Shipping Speed</Label>
+                    <Label className="text-sm font-medium">
+                      Shipping Speed <span className="text-red-500">*</span>
+                    </Label>
                     <Select onValueChange={handleSpeedChange} value={shippingSpeed || ""}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className={`h-10 ${!shippingSpeed ? 'border-red-300' : ''}`}>
                         <SelectValue placeholder="Select Speed" />
                       </SelectTrigger>
                       <SelectContent>
@@ -252,9 +299,11 @@ export default function CartPage() {
 
                 {/* Payment Selection */}
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Payment Method</Label>
+                  <Label className="text-sm font-medium">
+                    Payment Method <span className="text-red-500">*</span>
+                  </Label>
                   <Select onValueChange={handlePaymentChange} value={paymentMethod || ""}>
-                    <SelectTrigger className="h-10">
+                    <SelectTrigger className={`h-10 ${!paymentMethod ? 'border-red-300' : ''}`}>
                       <SelectValue placeholder="Select Payment" />
                     </SelectTrigger>
                     <SelectContent>
@@ -309,22 +358,33 @@ export default function CartPage() {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <Link
-                  href="/checkout"
-                  className={!shippingCarrier || !shippingSpeed || !paymentMethod ? "pointer-events-none" : ""}
-                >
+                {/* Improved Checkout Button with proper validation */}
+                {isFormValid ? (
+                  <Link href="/checkout">
+                    <Button className="w-full bg-green-600 hover:bg-green-700 h-11 text-sm sm:text-base">
+                      Proceed to Checkout
+                    </Button>
+                  </Link>
+                ) : (
                   <Button
-                    className="w-full bg-green-600 hover:bg-green-700 h-11 text-sm sm:text-base"
-                    disabled={!shippingCarrier || !shippingSpeed || !paymentMethod}
+                    className="w-full bg-gray-400 cursor-not-allowed h-11 text-sm sm:text-base"
+                    disabled
+                    onClick={handleCheckoutClick}
                   >
                     Proceed to Checkout
                   </Button>
-                </Link>
+                )}
 
-                {(!shippingCarrier || !shippingSpeed || !paymentMethod) && (
-                  <p className="text-xs text-center text-red-500 mt-2">
-                    Please select shipping and payment options to continue.
-                  </p>
+                {/* Enhanced Error Message */}
+                {!isFormValid && (
+                  <div className="text-xs text-center text-red-500 mt-2 space-y-1">
+                    <p className="font-medium">Please complete the following required fields:</p>
+                    <ul className="text-left space-y-1">
+                      {!shippingCarrier && <li>• Select a shipping carrier</li>}
+                      {!shippingSpeed && <li>• Select a shipping speed</li>}
+                      {!paymentMethod && <li>• Select a payment method</li>}
+                    </ul>
+                  </div>
                 )}
               </CardContent>
             </Card>

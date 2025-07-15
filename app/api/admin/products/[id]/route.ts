@@ -1,23 +1,29 @@
+// /app/api/admin/products/[id]/route.ts
 import { NextResponse } from "next/server"
 import { getProductById, updateProduct, deleteProduct } from "@/lib/db-operations"
-import { unlink } from "fs/promises"
-import { join } from "path"
+import { deleteImageFromBlob } from "@/lib/utils/imageUtils"
 
-// Helper function to delete image file from filesystem
-async function deleteImageFile(imageUrl: string): Promise<void> {
-  if (!imageUrl) return
+// Updated to work with Vercel Blob storage instead of filesystem
+async function deleteImageFile(imageUrl: string): Promise<boolean> {
+  if (!imageUrl) return true
   
   try {
-    // Only delete files that are stored locally (start with /images/products/)
+    // Handle both old filesystem URLs and new Vercel Blob URLs
     if (imageUrl.startsWith('/images/products/')) {
-      const filename = imageUrl.replace('/images/products/', '')
-      const filePath = join(process.cwd(), 'public', 'images', 'products', filename)
-      await unlink(filePath)
-      console.log(`Deleted image file: ${filename}`)
+      // Legacy local filesystem image - log but don't try to delete
+      console.log(`Legacy filesystem image detected (not deleting): ${imageUrl}`)
+      return true
+    } else if (imageUrl.includes('blob.vercel-storage.com')) {
+      // Vercel Blob storage image - delete using Blob API
+      return await deleteImageFromBlob(imageUrl)
+    } else {
+      // Unknown image URL format
+      console.log(`Unknown image URL format (skipping deletion): ${imageUrl}`)
+      return true
     }
   } catch (error) {
-    // File might not exist or already deleted - this is okay
-    console.log(`Could not delete image file ${imageUrl}:`, error)
+    console.error(`Error deleting image ${imageUrl}:`, error)
+    return false
   }
 }
 
@@ -75,14 +81,22 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
     
     // Delete old image file if image was changed and old image exists
+    let oldImageDeleted = true
     if (imageChanged && oldImageUrl) {
-      await deleteImageFile(oldImageUrl)
+      console.log('Image changed, deleting old image:', oldImageUrl)
+      oldImageDeleted = await deleteImageFile(oldImageUrl)
+      if (!oldImageDeleted) {
+        console.warn('Failed to delete old image:', oldImageUrl)
+      }
     }
     
     return NextResponse.json({
       success: true,
       product: updatedProduct,
-      message: imageChanged ? "Product updated and old image removed" : "Product updated"
+      message: imageChanged 
+        ? (oldImageDeleted ? "Product updated and old image removed" : "Product updated (old image deletion failed)")
+        : "Product updated",
+      oldImageDeleted
     })
   } catch (error) {
     console.error("Failed to update product:", error)
@@ -105,7 +119,10 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       )
     }
     
-    // Delete the product from database
+    // Store image URL before deletion
+    const imageUrl = product.image
+    
+    // Delete the product from database first
     const success = await deleteProduct(params.id)
     
     if (!success) {
@@ -116,13 +133,21 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
     
     // Delete associated image file
-    if (product.image) {
-      await deleteImageFile(product.image)
+    let imageDeleted = true
+    if (imageUrl) {
+      console.log('Deleting product image:', imageUrl)
+      imageDeleted = await deleteImageFile(imageUrl)
+      if (!imageDeleted) {
+        console.warn('Failed to delete product image:', imageUrl)
+      }
     }
     
     return NextResponse.json({
       success: true,
-      message: "Product and associated image deleted successfully"
+      message: imageDeleted 
+        ? "Product and associated image deleted successfully"
+        : "Product deleted successfully (image deletion failed)",
+      imageDeleted
     })
   } catch (error) {
     console.error("Failed to delete product:", error)

@@ -61,7 +61,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-cyan-50">
       {/* Header */}
       <Header variant="public" />
 

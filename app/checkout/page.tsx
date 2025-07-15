@@ -152,14 +152,14 @@ export default function CheckoutPage() {
   if (cartState.items.length === 0) {
     // Render a loading/redirecting state while useEffect does its job
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-cyan-50 flex items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-red-600" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-cyan-50">
       <Header variant="public" />
       <main className="max-w-4xl min-h-[calc(100dvh-496px)] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <BackButton to="/cart" />

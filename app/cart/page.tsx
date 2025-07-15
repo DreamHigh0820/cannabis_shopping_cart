@@ -79,7 +79,7 @@ export default function CartPage() {
 
   if (cartState.items.length === 0) {
     return (
-      <div className="bg-gray-50">
+      <div className="bg-gradient-to-br from-sky-50 to-cyan-50">
         <Header variant="public" />
         <main className="flex min-h-[calc(100dvh-496px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 items-center justify-center">
           <Card className="w-full max-w-md text-center">
@@ -105,7 +105,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gradient-to-br from-sky-50 to-cyan-50">
       <Header variant="public" />
 
       <main className="min-h-[calc(100dvh-496px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">

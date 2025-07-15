@@ -83,7 +83,7 @@ export default function TelegramAdminPage() {
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        <BackButton />
+        <BackButton to="/admin" />
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-4">Telegram Admin Dashboard</h1>
           <p className="text-gray-600">Manage Telegram notifications and messages</p>

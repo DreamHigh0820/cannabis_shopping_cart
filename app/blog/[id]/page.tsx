@@ -123,8 +123,8 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           <div className="border-t pt-8">
             <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {relatedPosts.map((post) => (
-                <Card key={post.id} className="hover:shadow-lg transition-shadow">
+              {relatedPosts.map((post, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow">
                   <div className="p-0">
                     <Image
                       src={post.image || "/placeholder.svg"}

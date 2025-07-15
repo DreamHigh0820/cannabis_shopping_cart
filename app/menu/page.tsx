@@ -97,7 +97,7 @@ export default function MenuPage() {
     cartDispatch({
       type: "ADD_ITEM",
       payload: {
-        id: product.id.toString(),
+        id: product.id,
         name: product.name,
         category: product.category,
         price: product.price,
@@ -200,10 +200,10 @@ export default function MenuPage() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {paginatedProducts.map((product: any) => {
+          {paginatedProducts.map((product: any, index) => {
             const selectedQty = selectedQuantities[product.id] || 1
             return (
-              <Card key={product.id} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
                     src={"https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
@@ -280,7 +280,7 @@ export default function MenuPage() {
             <div className="hidden sm:flex space-x-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <Button
-                  key={page}
+                  key={`page-${page}`}
                   variant={currentPage === page ? "default" : "outline"}
                   size="sm"
                   className={currentPage === page ? "bg-green-600 hover:bg-green-700" : ""}

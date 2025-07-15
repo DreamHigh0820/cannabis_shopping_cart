@@ -14,6 +14,7 @@ import { useCart } from "@/lib/cart-context"
 import { useCartCalculations } from "@/hooks/use-cart-calculations"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
+import BackButton from "../../components/BackButton"
 
 export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -96,9 +97,9 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header variant="public" backButton={{ href: "/cart", text: "Back to Cart" }} />
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <Header variant="public" />
+      <main className="max-w-4xl min-h-[calc(100dvh-496px)] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <BackButton to="/cart" />
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Finalize Your Order</h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <Card>
@@ -137,8 +138,8 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2 text-sm">
-                {cartState.items.map((item) => (
-                  <div key={item.id} className="flex justify-between">
+                {cartState.items.map((item, index) => (
+                  <div key={index} className="flex justify-between">
                     <span>
                       {item.quantity} x {item.name}
                     </span>

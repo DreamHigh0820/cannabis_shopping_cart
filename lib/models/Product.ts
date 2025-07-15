@@ -1,11 +1,10 @@
-export type ProductCategory = "flowers" | "vapes" | "edibles" | "extracts" | "pound"
 
 export interface Product {
   _id?: string
   id: number
   code: string // e.g., XXYY##
   name: string
-  category: ProductCategory
+  category: string
   price: number
   quantity: number // Stock quantity
   image: string
@@ -16,6 +15,8 @@ export interface Product {
   featured?: boolean
   createdAt?: Date
   updatedAt?: Date
+  isQP?: boolean
+  qpPrice?: number
 }
 
 export interface BlogPost {

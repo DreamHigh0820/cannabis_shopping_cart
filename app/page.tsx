@@ -29,6 +29,8 @@ export default function HomePage() {
         category: product.category,
         price: product.price,
         image: product.image,
+        isQP: product.isQP,
+        qpPrice: product.qpPrice,
         quantity: 1,
       },
     })
@@ -139,8 +141,8 @@ export default function HomePage() {
               { name: "Vapes", icon: "💨", description: "Cartridges & disposable pens" },
               { name: "Edibles", icon: "🍯", description: "Gummies, chocolates & more" },
               { name: "Extracts", icon: "💎", description: "Concentrates & live rosin" },
-            ].map((category) => (
-              <Link href={`/menu?category=${category.name.toLowerCase()}`} key={category.name}>
+            ].map((category, index) => (
+              <Link href={`/menu?category=${category.name.toLowerCase()}`} key={index}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
                   <CardHeader className="text-center">
                     <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{category.icon}</div>
@@ -163,7 +165,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map((product, index) => (
-              <Card key={product.id} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
                     // src={product.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}
@@ -211,8 +213,8 @@ export default function HomePage() {
             <p className="text-gray-600">Stay informed with the latest cannabis news and education</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
-              <Card key={post.id} className="hover:shadow-lg transition-shadow">
+            {blogPosts.map((post, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
                     // src={post.image || "https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"}

@@ -25,12 +25,13 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     defaultValues: {
       code: product?.code || "",
       name: product?.name || "",
-      category: product?.category || "Flower",
+      category: product?.category || "flowers",
       price: product?.price || 0,
       quantity: product?.quantity || 0,
       cost: product?.cost || 0,
@@ -39,8 +40,13 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       nose: product?.nose || "",
       strain: product?.strain || "Indica",
       isQP: product?.isQP || false,
+      featured: product?.featured || false,
+      qpPrice: product?.qpPrice || 0, // Add this field to your Product type
     },
   })
+
+  // Watch the isQP checkbox value
+  const isQPChecked = watch("isQP")
 
   useEffect(() => {
     if (product) {
@@ -56,6 +62,8 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         nose: product.nose,
         strain: product.strain,
         isQP: product.isQP,
+        featured: product.featured,
+        qpPrice: product.qpPrice || 0,
       })
     }
   }, [product, reset])
@@ -190,6 +198,22 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
           <Input id="image" {...register("image", { required: "Image URL is required" })} />
           {errors.image && <p className="text-sm text-red-500">{errors.image.message}</p>}
         </div>
+        <div className="flex space-x-2">
+          <Controller
+            name="featured"
+            control={control}
+            render={({ field }) => (
+              <input
+                type="checkbox"
+                id="featured"
+                checked={field.value}
+                onChange={field.onChange}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+            )}
+          />
+          <Label htmlFor="featured">Featured Product</Label>
+        </div>
         <div className="space-y-2 md:col-span-2">
           <Label htmlFor="description">Description</Label>
           <Textarea
@@ -204,7 +228,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
           <Label htmlFor="nose">Nose</Label>
           <Textarea id="nose" {...register("nose")} />
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex space-x-2">
           <Controller
             name="isQP"
             control={control}
@@ -220,6 +244,24 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
           />
           <Label htmlFor="isQP">Is this a QP Flower product?</Label>
         </div>
+
+        {/* Conditionally show QP price field */}
+        {isQPChecked && (
+          <div className="space-y-2">
+            <Label htmlFor="qpPrice">QP Price ($)</Label>
+            <Input
+              id="qpPrice"
+              type="number"
+              step="0.01"
+              {...register("qpPrice", {
+                required: isQPChecked ? "QP price is required when QP is selected" : false,
+                valueAsNumber: true,
+                min: { value: 0, message: "QP price must be positive" },
+              })}
+            />
+            {errors.qpPrice && <p className="text-sm text-red-500">{errors.qpPrice.message}</p>}
+          </div>
+        )}
       </div>
       <div className="flex justify-end">
         <Button type="submit" disabled={isSubmitting}>

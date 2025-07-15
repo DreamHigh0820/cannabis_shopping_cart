@@ -122,7 +122,7 @@ export default function AdminsPage() {
 
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <BackButton />
+      <BackButton to="/admin" />
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">Create New Admin</h1>
         <form onSubmit={handleCreateAdmin} className="space-y-4 max-w-lg">
@@ -164,8 +164,8 @@ export default function AdminsPage() {
           </div>
         ) : (
           <div className="space-y-2">
-            {admins.map((admin) => (
-              <div key={admin.id} className="flex items-center justify-between p-4 border rounded-lg">
+            {admins.map((admin, index) => (
+              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                 <div>
                   <p className="font-semibold">{admin.name}</p>
                   <p className="text-sm text-gray-500">

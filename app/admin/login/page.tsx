@@ -29,7 +29,6 @@ export default function AdminLoginPage() {
         body: JSON.stringify({ identifier, password }),
         credentials: "include", // <-- THIS
       })
-      console.log("admin login response", response)
       if (response.ok) {
         router.push("/admin")
       } else {

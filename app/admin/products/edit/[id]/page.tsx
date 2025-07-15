@@ -42,7 +42,7 @@ export default function EditProductPage() {
   if (!product) {
     return (
       <div className="container mx-auto py-8">
-        <BackButton />
+        <BackButton to="/admin/products" />
         <h1 className="text-2xl font-bold">Product not found.</h1>
       </div>
     )
@@ -50,7 +50,7 @@ export default function EditProductPage() {
 
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <BackButton />
+      <BackButton to="/admin/products" />
       <h1 className="text-3xl font-bold mb-6">Edit Product</h1>
       <ProductForm product={product} isEditing={true} />
     </div>

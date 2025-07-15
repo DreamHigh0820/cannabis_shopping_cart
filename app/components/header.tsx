@@ -119,9 +119,9 @@ export default function Header({ variant, admin, backButton }: HeaderProps) {
         />
       </Link>
           <nav className="hidden md:flex space-x-8">
-            {publicNavLinks.map((link) => (
+            {publicNavLinks.map((link, index) => (
               <Link
-                key={link.href}
+                key={index}
                 href={link.href}
                 className={`${pathname === link.href ? "text-gray-900 font-medium" : "text-gray-700"
                   } hover:text-green-600`}

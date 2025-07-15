@@ -73,9 +73,9 @@ export default function BlogPage() {
         </div>
 
         <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          {categories.map((category) => (
+          {categories.map((category, index) => (
             <Badge
-              key={category}
+              key={index}
               variant={category === selectedCategory ? "default" : "outline"}
               className={`cursor-pointer hover:bg-green-100 ${category === selectedCategory ? "bg-green-600 hover:bg-green-700" : ""
                 }`}
@@ -141,8 +141,8 @@ export default function BlogPage() {
 
         {displayedPosts.length > 1 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayedPosts.slice(1).map((post) => (
-              <Card key={post.id} className="hover:shadow-lg transition-shadow">
+            {displayedPosts.slice(1).map((post, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
                   <Image
                     // src={post.image || "/placeholder.svg"}

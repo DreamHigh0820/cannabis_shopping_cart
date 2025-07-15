@@ -40,7 +40,6 @@ export default function AdminDashboard() {
   const checkAuth = async () => {
     try {
       const response = await fetch("/api/admin/auth/me")
-      console.log("admin data", response)
       
       if (response.ok) {
         const data = await response.json()
@@ -77,11 +76,11 @@ export default function AdminDashboard() {
       const products = await productsRes.json()
       const blogs = await blogRes.json()
       const telegramStatus = await telegramRes.json()
-
+      console.log("products", products, Array.isArray(products))
       setSystemStatus({
         database: productsRes.ok ? "connected" : "error",
         telegram: telegramStatus.hasBotToken && telegramStatus.hasChatId ? "configured" : "incomplete",
-        products: Array.isArray(products) ? products.length : 0,
+        products: Array.isArray(products.products) ? products.products.length : 0,
         blogPosts: Array.isArray(blogs) ? blogs.length : 0,
         orders: 0, // Placeholder
       })

@@ -10,6 +10,8 @@ export interface CartItem {
   price: number
   quantity: number
   image: string
+  isQP: boolean
+  qpPrice: number
 }
 
 interface CartState {
@@ -91,8 +93,8 @@ const initialState: CartState = {
   items: [],
   totalItems: 0,
   totalPrice: 0,
-  shippingCarrier: "usps", // Default carrier
-  shippingSpeed: "priority", // Default speed
+  shippingCarrier: "ups", // Default carrier
+  shippingSpeed: "ground", // Default speed
   paymentMethod: "BTC", // Default payment
 }
 

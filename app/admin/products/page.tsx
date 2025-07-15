@@ -54,7 +54,7 @@ export default function AdminProductsPage() {
 
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <BackButton />
+      <BackButton to="/admin" />
       <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-y-4 mb-6">
         <h1 className="text-2xl font-bold">Product Management</h1>
         <Link href="/admin/products/new">
@@ -83,12 +83,15 @@ export default function AdminProductsPage() {
                   <TableHead>Price</TableHead>
                   <TableHead>Cost</TableHead>
                   <TableHead>Stock</TableHead>
+                  <TableHead>QP</TableHead>
+                  <TableHead>QP price</TableHead>
+                  <TableHead>Featured</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product._id}>
+                {products.map((product, index) => (
+                  <TableRow key={index}>
                     <TableCell>
                       <Badge variant="outline">{product.code}</Badge>
                     </TableCell>
@@ -97,6 +100,9 @@ export default function AdminProductsPage() {
                     <TableCell>${product.price.toFixed(2)}</TableCell>
                     <TableCell>${product.cost?.toFixed(2) || "N/A"}</TableCell>
                     <TableCell>{product.quantity}</TableCell>
+                    <TableCell>{product.isQP ? "Yes" : "No"}</TableCell>
+                    <TableCell>{product.qpPrice}</TableCell>
+                    <TableCell>{product.featured ? "Yes" : "No"}</TableCell>
                     <TableCell className="flex gap-2">
                       <Link href={`/admin/products/edit/${product._id}`}>
                         <Button variant="outline" size="icon">

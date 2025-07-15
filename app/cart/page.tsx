@@ -13,6 +13,7 @@ import { useCart } from "@/lib/cart-context"
 import { useCartCalculations } from "@/hooks/use-cart-calculations"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
+import BackButton from "@/components/BackButton"
 
 export default function CartPage() {
   const { state: cartState, dispatch: cartDispatch } = useCart()
@@ -39,7 +40,7 @@ export default function CartPage() {
   const handleCarrierChange = (value: "ups" | "usps") => {
     cartDispatch({ type: "SET_SHIPPING_CARRIER", payload: value })
     // Reset speed if carrier changes
-    cartDispatch({ type: "SET_SHIPPING_SPEED", payload: 'ground' })
+    cartDispatch({ type: "SET_SHIPPING_SPEED", payload: value === "ups" ? 'ground' : 'priority' })
   }
 
   const handleSpeedChange = (value: any) => {
@@ -52,23 +53,29 @@ export default function CartPage() {
 
   if (cartState.items.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <Card className="w-full max-w-md text-center">
-          <CardHeader className="pb-4">
-            <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-            <CardTitle className="text-xl sm:text-2xl">Your Cart is Empty</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-600 mb-6 text-sm sm:text-base">
-              Looks like you haven't added anything to your cart yet.
-            </p>
-            <Link href="/menu">
-              <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
-                Start Shopping
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="bg-gray-50">
+        <Header variant="public" />
+        <main className="flex min-h-[calc(100dvh-496px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 items-center justify-center">
+          <Card className="w-full max-w-md text-center">
+            <CardHeader className="pb-4">
+              <ShoppingCart className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+              <CardTitle className="text-xl sm:text-2xl">Your Cart is Empty</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-6 text-sm sm:text-base">
+                Looks like you haven't added anything to your cart yet.
+              </p>
+              <Link href="/menu">
+                <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                  Start Shopping
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </main>
+
+        {/* Footer */}
+        <Footer variant="public" />
       </div>
     )
   }
@@ -78,16 +85,17 @@ export default function CartPage() {
       <Header variant="public" />
 
       <main className="min-h-[calc(100dvh-496px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        <BackButton to="/menu" />
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Your Shopping Cart</h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
             <Card>
               <CardContent className="p-0">
                 <div className="divide-y">
-                  {cartState.items.map((item) => (
-                    <div key={item.id} className="p-4 sm:p-6">
+                  {cartState.items.map((item, index) => (
+                    <div key={index} className="p-4 sm:p-6">
                       {/* Mobile Layout */}
                       <div className="block sm:hidden">
                         <div className="flex items-start gap-3 mb-3">
@@ -103,9 +111,9 @@ export default function CartPage() {
                             <p className="text-sm text-gray-500 capitalize mb-1">{item.category}</p>
                             <p className="text-sm font-medium">${item.price.toFixed(2)}</p>
                           </div>
-                          <Button 
-                            size="icon" 
-                            variant="ghost" 
+                          <Button
+                            size="icon"
+                            variant="ghost"
                             onClick={() => removeItem(item.id)}
                             className="flex-shrink-0"
                           >
@@ -215,7 +223,7 @@ export default function CartPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 {shippingCarrier && (
                   <div className="space-y-2">
                     <Label className="text-sm font-medium">Shipping Speed</Label>
@@ -296,7 +304,7 @@ export default function CartPage() {
 
                 <Separator />
 
-                <div className="flex justify-between font-bold text-base sm:text-lg">
+                <div className="flex justify-between font-bold text-base sm:text-lg !mb-2">
                   <span>Total</span>
                   <span>${total.toFixed(2)}</span>
                 </div>
@@ -312,7 +320,7 @@ export default function CartPage() {
                     Proceed to Checkout
                   </Button>
                 </Link>
-                
+
                 {(!shippingCarrier || !shippingSpeed || !paymentMethod) && (
                   <p className="text-xs text-center text-red-500 mt-2">
                     Please select shipping and payment options to continue.

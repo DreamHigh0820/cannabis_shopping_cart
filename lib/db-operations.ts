@@ -1,5 +1,5 @@
 import { getDatabase } from "./mongodb"
-import type { Product, BlogPost, ProductCategory, Admin } from "./models"
+import type { Product, BlogPost, Admin } from "./models"
 import { ObjectId } from "mongodb"
 
 // --- Product Operations ---
@@ -24,7 +24,7 @@ export async function getProductById(id: string): Promise<Product | null> {
   return product
 }
 
-export async function getProductsByCategory(category: ProductCategory): Promise<Product[]> {
+export async function getProductsByCategory(category: string): Promise<Product[]> {
   try {
     const db = await getDatabase()
     const products = await db.collection<Product>("products")
@@ -42,7 +42,7 @@ export async function createProduct(productData: Omit<Product, "_id">): Promise<
   const db = await getDatabase()
   const result = await db.collection<Omit<Product, "_id">>("products").insertOne(productData)
   const newProduct = { ...productData, _id: result.insertedId }
-  return newProduct as Product
+  return newProduct as unknown as Product
 }
 
 export async function updateProduct(id: string, productData: Partial<Product>): Promise<Product | null> {

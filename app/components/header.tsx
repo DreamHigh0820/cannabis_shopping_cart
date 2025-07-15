@@ -124,7 +124,7 @@ export default function Header({ variant, admin, backButton }: HeaderProps) {
                 key={index}
                 href={link.href}
                 className={`${pathname === link.href ? "text-gray-900 font-medium" : "text-gray-700"
-                  } hover:text-green-600`}
+                  } hover:text-red-600`}
               >
                 {link.label}
               </Link>
@@ -138,7 +138,7 @@ export default function Header({ variant, admin, backButton }: HeaderProps) {
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="sm" className="bg-green-600 hover:bg-green-700">
+              <Button size="sm" className="bg-red-600 hover:bg-red-700">
                 <MessageCircle className="h-4 w-4 mr-2" />
                 Contact
               </Button>

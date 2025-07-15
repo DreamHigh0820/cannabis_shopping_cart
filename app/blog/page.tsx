@@ -54,7 +54,7 @@ export default function BlogPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <p>Loading blog posts...</p>
         </div>
       </div>
@@ -77,7 +77,7 @@ export default function BlogPage() {
             <Badge
               key={index}
               variant={category === selectedCategory ? "default" : "outline"}
-              className={`cursor-pointer hover:bg-green-100 ${category === selectedCategory ? "bg-green-600 hover:bg-green-700" : ""
+              className={`cursor-pointer hover:bg-red-100 ${category === selectedCategory ? "bg-red-600 hover:bg-red-700" : ""
                 }`}
               onClick={() => handleCategoryChange(category)}
             >
@@ -129,7 +129,7 @@ export default function BlogPage() {
                   <span>{displayedPosts[0].readTime}</span>
                 </div>
                 <Link href={`/blog/${displayedPosts[0].id}`}>
-                  <Button className="bg-green-600 hover:bg-green-700">
+                  <Button className="bg-red-600 hover:bg-red-700">
                     Read More
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
@@ -158,7 +158,7 @@ export default function BlogPage() {
                     <Badge variant="outline">{post.category}</Badge>
                     <span className="text-sm text-gray-500">{post.readTime}</span>
                   </div>
-                  <CardTitle className="text-xl mb-3 hover:text-green-600">
+                  <CardTitle className="text-xl mb-3 hover:text-red-600">
                     <Link href={`/blog/${post.id}`}>{post.title}</Link>
                   </CardTitle>
                   <p className="text-gray-600 mb-4">{post.excerpt}</p>
@@ -173,7 +173,7 @@ export default function BlogPage() {
                     </div>
                   </div>
                   <Link href={`/blog/${post.id}`}>
-                    <Button variant="outline" className="w-full hover:bg-green-50 bg-transparent">
+                    <Button variant="outline" className="w-full hover:bg-red-50 bg-transparent">
                       Read More
                     </Button>
                   </Link>

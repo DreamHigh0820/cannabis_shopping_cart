@@ -58,7 +58,7 @@ export default function InitSuperAdminPage() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center lg:px-8 sm:px-6 px-4 py-8">
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
-          <UserPlus className="mx-auto h-10 w-10 text-green-600" />
+          <UserPlus className="mx-auto h-10 w-10 text-red-600" />
           <CardTitle className="text-2xl font-bold mt-2">Create Super Admin</CardTitle>
           <CardDescription>Initialize the first administrative account for your application.</CardDescription>
         </CardHeader>

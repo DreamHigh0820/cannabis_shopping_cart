@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center lg:px-8 sm:px-6 px-4 py-8">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          {/* <Leaf className="mx-auto h-10 w-10 text-green-600" /> */}
+          {/* <Leaf className="mx-auto h-10 w-10 text-red-600" /> */}
           <CardTitle className="text-2xl font-bold mt-2">Admin Login</CardTitle>
           <CardDescription>Access the DoughBoy Dashboard</CardDescription>
         </CardHeader>

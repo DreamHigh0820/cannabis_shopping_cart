@@ -9,22 +9,22 @@ import Footer from "@/app/components/footer"
 export default function AboutPage() {
   const values = [
     {
-      icon: <Shield className="h-8 w-8 text-green-600" />,
+      icon: <Shield className="h-8 w-8 text-red-600" />,
       title: "Quality Assurance",
       description: "Every product is lab-tested and carefully curated to ensure the highest quality standards.",
     },
     {
-      icon: <Clock className="h-8 w-8 text-green-600" />,
+      icon: <Clock className="h-8 w-8 text-red-600" />,
       title: "Fast Delivery",
       description: "Same-day delivery available with discrete packaging and professional service.",
     },
     {
-      icon: <Heart className="h-8 w-8 text-green-600" />,
+      icon: <Heart className="h-8 w-8 text-red-600" />,
       title: "Customer Care",
       description: "Our team is dedicated to providing exceptional customer service and support.",
     },
     {
-      icon: <Users className="h-8 w-8 text-green-600" />,
+      icon: <Users className="h-8 w-8 text-red-600" />,
       title: "Community Focus",
       description: "We're committed to supporting our local community and cannabis education.",
     },
@@ -57,7 +57,7 @@ export default function AboutPage() {
       <Header variant="public" />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-600 to-emerald-600 text-white py-20">
+      <section className="bg-gradient-to-r from-sky-600 to-cyan-400 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">About DoughBoy</h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto">
@@ -144,7 +144,7 @@ export default function AboutPage() {
                     className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
                   />
                   <CardTitle className="text-xl">{member.name}</CardTitle>
-                  <p className="text-green-600 font-medium">{member.role}</p>
+                  <p className="text-red-600 font-medium">{member.role}</p>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">{member.bio}</p>
@@ -156,24 +156,24 @@ export default function AboutPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-16 bg-green-600 text-white">
+      <section className="py-16 bg-red-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold mb-2">1000+</div>
-              <p className="text-green-100">Happy Customers</p>
+              <p className="text-red-100">Happy Customers</p>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">50+</div>
-              <p className="text-green-100">Premium Products</p>
+              <p className="text-red-100">Premium Products</p>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">99%</div>
-              <p className="text-green-100">Satisfaction Rate</p>
+              <p className="text-red-100">Satisfaction Rate</p>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">24/7</div>
-              <p className="text-green-100">Customer Support</p>
+              <p className="text-red-100">Customer Support</p>
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/menu">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700">
+              <Button size="lg" className="bg-red-600 hover:bg-red-700">
                 Shop Our Menu
               </Button>
             </Link>

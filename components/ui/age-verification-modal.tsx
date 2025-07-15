@@ -31,7 +31,7 @@ export function AgeVerificationModal() {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <Card className="w-full max-w-md m-4">
         <CardHeader className="text-center">
-          <Leaf className="mx-auto h-12 w-12 text-green-600" />
+          <Leaf className="mx-auto h-12 w-12 text-red-600" />
           <CardTitle className="text-2xl">Age Verification</CardTitle>
           <CardDescription>You must be 21 years or older to enter this site.</CardDescription>
         </CardHeader>

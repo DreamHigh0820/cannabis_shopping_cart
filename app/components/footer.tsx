@@ -8,12 +8,12 @@ interface FeaderProps {
   variant: "public" | "admin"
 }
 
-export default function Footer ({ variant }: FeaderProps) {
+export default function Footer({ variant }: FeaderProps) {
 
   // Admin Header
   if (variant === "admin" || variant === "public") {
     return (
-        <footer className="bg-gray-900 text-white py-16 md:h-[400px]">
+      <footer className="bg-gray-900 text-white py-16 md:h-[400px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -50,8 +50,8 @@ export default function Footer ({ variant }: FeaderProps) {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/menu?category=extracts" className="hover:text-white">
-                    Extracts
+                  <Link href="/menu?category=concentrate" className="hover:text-white">
+                    Concentrate
                   </Link>
                 </li>
               </ul>
@@ -66,9 +66,9 @@ export default function Footer ({ variant }: FeaderProps) {
                 </li>
                 <li>
                   {/* <Link href="/blog" className="hover:text-white"> */}
-                  <Link href="" className="hover:text-white">
+                  {/* <Link href="" className="hover:text-white">
                     Blog
-                  </Link>
+                  </Link> */}
                 </li>
                 <li>
                   <Link href="/contact" className="hover:text-white">

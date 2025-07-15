@@ -140,13 +140,13 @@ export default function TelegramAdminPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Bot Token Status</Label>
-                <p className={`text-sm ${envStatus.botToken ? "text-green-600" : "text-red-600"}`}>
+                <p className={`text-sm ${envStatus.botToken ? "text-red-600" : "text-red-600"}`}>
                   {envStatus.botToken ? "✅ Configured" : "❌ Not configured"}
                 </p>
               </div>
               <div>
                 <Label>Chat ID Status</Label>
-                <p className={`text-sm ${envStatus.chatId ? "text-green-600" : "text-red-600"}`}>
+                <p className={`text-sm ${envStatus.chatId ? "text-red-600" : "text-red-600"}`}>
                   {envStatus.chatId ? "✅ Configured" : "❌ Not configured"}
                 </p>
               </div>

@@ -102,9 +102,9 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <p>Loading...</p>
         </div>
       </div>
@@ -112,34 +112,34 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-cyan-50">
       {/* Header */}
       <Header variant="public" />
 
       {/* Notification */}
       {notification && (
-        <div className="fixed top-20 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right">
+        <div className="fixed top-20 right-4 bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-in slide-in-from-right">
           {notification}
         </div>
       )}
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+      <section className="relative bg-gradient-to-r  text-white from-sky-600 to-cyan-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-4xl md:text-6xl font-bold mb-6">
                 Premium Cannabis
                 <br />
-                <span className="text-green-200">Delivered Fresh</span>
+                <span className="">Delivered Fresh</span>
               </h1>
-              <p className="text-xl mb-8 text-green-100">
+              <p className="text-xl mb-8 text-red-100">
                 Experience the finest selection of flowers, vapes, edibles, and extracts. Quality guaranteed,
                 satisfaction delivered.
               </p>
               <div className="flex flex-row gap-4">
                 <Link href="/menu">
-                  <Button size="lg" className="bg-white text-green-600 hover:bg-green-50">
+                  <Button size="lg" className="bg-white text-red-600 hover:bg-red-50">
                     Shop Now
                   </Button>
                 </Link>
@@ -147,7 +147,7 @@ export default function HomePage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-green-600 bg-transparent"
+                    className="border-white text-white hover:bg-white hover:text-red-600 bg-transparent"
                   >
                     View Menu
                   </Button>
@@ -230,7 +230,7 @@ export default function HomePage() {
                       <div className="flex flex-col">
                         {product.isQP && product.qpPrice ? (
                           <>
-                            <span className="text-lg font-bold text-green-600">
+                            <span className="text-lg font-bold text-red-600">
                               ${product.qpPrice}/QP
                             </span>
                             <span className="text-sm text-gray-500 line-through">
@@ -238,7 +238,7 @@ export default function HomePage() {
                             </span>
                           </>
                         ) : (
-                          <span className="text-lg font-bold text-green-600">
+                          <span className="text-lg font-bold text-red-600">
                             ${product.price}/lb
                           </span>
                         )}
@@ -251,7 +251,7 @@ export default function HomePage() {
                     </div>
                     <Button 
                       size="sm" 
-                      className="w-full bg-green-600 hover:bg-green-700" 
+                      className="w-full bg-red-600 hover:bg-red-700" 
                       onClick={() => addToCart(product)}
                     >
                       Add to Cart
@@ -264,7 +264,7 @@ export default function HomePage() {
             <div className="text-center py-12">
               <p className="text-gray-600 mb-4">No featured products available at the moment.</p>
               <Link href="/menu">
-                <Button className="bg-green-600 hover:bg-green-700">
+                <Button className="bg-red-600 hover:bg-red-700">
                   Browse All Products
                 </Button>
               </Link>
@@ -297,7 +297,7 @@ export default function HomePage() {
                     <div className="text-sm text-gray-500 mb-2">{post.date}</div>
                     <h3 className="font-semibold mb-2">{post.title}</h3>
                     <p className="text-gray-600 text-sm mb-4">{post.excerpt}</p>
-                    <Link href={`/blog/${post._id}`} className="text-green-600 hover:text-green-700 font-medium">
+                    <Link href={`/blog/${post._id}`} className="text-red-600 hover:text-red-700 font-medium">
                       Read More →
                     </Link>
                   </CardContent>
@@ -320,11 +320,11 @@ export default function HomePage() {
         <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 border z-50 max-w-sm">
           <div className="flex items-center justify-between mb-2 gap-x-2">
             <span className="font-semibold text-sm">Cart Summary</span>
-            <span className="text-green-600 font-bold text-sm">${cartState.totalPrice.toFixed(2)}</span>
+            <span className="text-red-600 font-bold text-sm">${cartState.totalPrice.toFixed(2)}</span>
           </div>
           <p className="text-xs text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
           <Link href="/cart">
-            <Button className="w-full bg-green-600 hover:bg-green-700 text-sm py-2">View Cart</Button>
+            <Button className="w-full bg-red-600 hover:bg-red-700 text-sm py-2">View Cart</Button>
           </Link>
         </div>
       )}

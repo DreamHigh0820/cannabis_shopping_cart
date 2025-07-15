@@ -82,13 +82,13 @@ export default function ContactPage() {
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                  <Phone className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 flex-shrink-0" />
+                  <Phone className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 flex-shrink-0" />
                   <span>Phone</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-sm sm:text-base text-gray-600 mb-2">Call us for immediate assistance</p>
-                <p className="text-xl sm:text-2xl font-bold text-green-600 break-all">(555) 123-4567</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600 break-all">(555) 123-4567</p>
                 <p className="text-xs sm:text-sm text-gray-500 mt-2">Available 24/7 for orders and support</p>
               </CardContent>
             </Card>
@@ -96,13 +96,13 @@ export default function ContactPage() {
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                  <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 flex-shrink-0" />
+                  <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 flex-shrink-0" />
                   <span>Telegram</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-sm sm:text-base text-gray-600 mb-2">Connect with us on Telegram</p>
-                <p className="text-xl sm:text-2xl font-bold text-green-600 break-all">@doughboy_official</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600 break-all">@doughboy_official</p>
                 <p className="text-xs sm:text-sm text-gray-500 mt-2">For orders, updates, and customer service</p>
               </CardContent>
             </Card>
@@ -110,13 +110,13 @@ export default function ContactPage() {
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                  <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 flex-shrink-0" />
+                  <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 flex-shrink-0" />
                   <span>Email</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <p className="text-sm sm:text-base text-gray-600 mb-2">Send us a message</p>
-                <p className="text-xl sm:text-2xl font-bold text-green-600 break-all">info@doughboy.com</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600 break-all">info@doughboy.com</p>
                 <p className="text-xs sm:text-sm text-gray-500 mt-2">We'll respond within 24 hours</p>
               </CardContent>
             </Card>
@@ -124,7 +124,7 @@ export default function ContactPage() {
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 flex-shrink-0" />
+                  <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 flex-shrink-0" />
                   <span>Business Hours</span>
                 </CardTitle>
               </CardHeader>
@@ -223,7 +223,7 @@ export default function ContactPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-green-600 hover:bg-green-700 h-11 sm:h-12 text-sm sm:text-base font-medium" 
+                  className="w-full bg-red-600 hover:bg-red-700 h-11 sm:h-12 text-sm sm:text-base font-medium" 
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Sending..." : "Send Message"}
@@ -232,7 +232,7 @@ export default function ContactPage() {
                 {submitMessage && (
                   <div
                     className={`p-3 sm:p-4 rounded-md text-sm sm:text-base ${
-                      isSuccess ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
+                      isSuccess ? "bg-red-50 text-red-800" : "bg-red-50 text-red-800"
                     }`}
                   >
                     {submitMessage}

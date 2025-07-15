@@ -47,7 +47,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <p>Loading blog post...</p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Blog Post Not Found</h2>
           <p className="text-gray-600 mb-6">{error || "The requested blog post could not be found."}</p>
           <Link href="/blog">
-            <Button className="bg-green-600 hover:bg-green-700">Back to Blog</Button>
+            <Button className="bg-red-600 hover:bg-red-700">Back to Blog</Button>
           </Link>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
                     <Badge variant="outline" className="mb-2">
                       {post.category}
                     </Badge>
-                    <h3 className="font-semibold mb-2 hover:text-green-600">
+                    <h3 className="font-semibold mb-2 hover:text-red-600">
                       <Link href={`/blog/${post.id}`}>{post.title}</Link>
                     </h3>
                     <Link href={`/blog/${post.id}`}>
@@ -153,7 +153,7 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
           </div>
         )}
 
-        <Card className="mt-12 bg-green-50 border-green-200">
+        <Card className="mt-12 bg-red-50 border-red-200">
           <CardContent className="p-6 text-center">
             <h3 className="text-xl font-bold mb-2">Stay Updated</h3>
             <p className="text-gray-600 mb-4">
@@ -163,9 +163,9 @@ export default function BlogPostPage({ params }: { params: { id: string } }) {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
               />
-              <Button className="bg-green-600 hover:bg-green-700">Subscribe</Button>
+              <Button className="bg-red-600 hover:bg-red-700">Subscribe</Button>
             </div>
           </CardContent>
         </Card>

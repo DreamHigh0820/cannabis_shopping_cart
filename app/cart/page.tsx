@@ -92,7 +92,7 @@ export default function CartPage() {
                 Looks like you haven't added anything to your cart yet.
               </p>
               <Link href="/menu">
-                <Button className="bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                <Button className="bg-red-600 hover:bg-red-700 w-full sm:w-auto">
                   Start Shopping
                 </Button>
               </Link>
@@ -137,7 +137,7 @@ export default function CartPage() {
                               <p className="text-sm text-gray-500 capitalize mb-1">{item.category}</p>
                               {getPriceDisplay(item)}
                               {item.isQP && (
-                                <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-1">
+                                <span className="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full mt-1">
                                   QP Unit
                                 </span>
                               )}
@@ -199,7 +199,7 @@ export default function CartPage() {
                             <p className="text-sm text-gray-500 capitalize">{item.category}</p>
                             {getPriceDisplay(item)}
                             {item.isQP && (
-                              <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full mt-1">
+                              <span className="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full mt-1">
                                 QP Unit
                               </span>
                             )}
@@ -326,13 +326,13 @@ export default function CartPage() {
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
                   {volumeDiscount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-red-600">
                       <span>Volume Discount</span>
                       <span>-${volumeDiscount.toFixed(2)}</span>
                     </div>
                   )}
                   {shippingDiscount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-red-600">
                       <span>Flower Shipping Coupon</span>
                       <span>-${shippingDiscount.toFixed(2)}</span>
                     </div>
@@ -361,7 +361,7 @@ export default function CartPage() {
                 {/* Improved Checkout Button with proper validation */}
                 {isFormValid ? (
                   <Link href="/checkout">
-                    <Button className="w-full bg-green-600 hover:bg-green-700 h-11 text-sm sm:text-base">
+                    <Button className="w-full bg-red-600 hover:bg-red-700 h-11 text-sm sm:text-base">
                       Proceed to Checkout
                     </Button>
                   </Link>

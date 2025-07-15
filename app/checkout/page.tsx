@@ -153,7 +153,7 @@ export default function CheckoutPage() {
     // Render a loading/redirecting state while useEffect does its job
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-green-600" />
+        <Loader2 className="h-12 w-12 animate-spin text-red-600" />
       </div>
     )
   }
@@ -188,7 +188,7 @@ export default function CheckoutPage() {
                   <Textarea id="notes" name="notes" placeholder="Delivery notes, etc." />
                 </div>
                 {error && <p className="text-sm text-red-600">{error}</p>}
-                <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
+                <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isSubmitting}>
                   {isSubmitting ? <Loader2 className="animate-spin" /> : "Submit & Contact Admin"}
                 </Button>
               </form>
@@ -214,7 +214,7 @@ export default function CheckoutPage() {
                               {item.quantity} {unit} x {item.name}
                             </span>
                             {item.isQP && (
-                              <span className="ml-2 inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                              <span className="ml-2 inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
                                 QP Unit
                               </span>
                             )}
@@ -260,13 +260,13 @@ export default function CheckoutPage() {
                     <span>${subtotal.toFixed(2)}</span>
                   </div>
                   {volumeDiscount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-red-600">
                       <span>Volume Discount</span>
                       <span>-${volumeDiscount.toFixed(2)}</span>
                     </div>
                   )}
                   {shippingDiscount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-red-600">
                       <span>Flower Shipping Coupon</span>
                       <span>-${shippingDiscount.toFixed(2)}</span>
                     </div>

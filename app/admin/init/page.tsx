@@ -45,7 +45,7 @@ export default function InitPage() {
               Click the button below to initialize your MongoDB database with sample products and blog posts.
             </p>
 
-            <Button onClick={initializeDatabase} disabled={loading} className="w-full bg-green-600 hover:bg-green-700">
+            <Button onClick={initializeDatabase} disabled={loading} className="w-full bg-red-600 hover:bg-red-700">
               {loading ? "Initializing..." : "Initialize Database"}
             </Button>
 

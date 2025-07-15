@@ -99,7 +99,7 @@ export default function AdminDashboard() {
       case "connected":
       case "configured":
       case "active":
-        return <CheckCircle className="h-5 w-5 text-green-600" />
+        return <CheckCircle className="h-5 w-5 text-red-600" />
       case "error":
       case "incomplete":
         return <XCircle className="h-5 w-5 text-red-600" />
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
     switch (status) {
       case "connected":
       case "configured":
-        return "text-green-600"
+        return "text-red-600"
       case "error":
       case "incomplete":
         return "text-red-600"
@@ -190,7 +190,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <p>Loading admin dashboard...</p>
         </div>
       </div>
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-green-100 rounded-lg text-green-600">{page.icon}</div>
+                      <div className="p-2 bg-red-100 rounded-lg text-red-600">{page.icon}</div>
                       <CardTitle className="text-lg">{page.title}</CardTitle>
                     </div>
                   </div>
@@ -231,7 +231,7 @@ export default function AdminDashboard() {
                       variant={page.status === "planned" ? "secondary" : "outline"}
                       className={
                         page.status === "configured" || page.status === "connected" || page.status === "active"
-                          ? "bg-green-100 text-green-800"
+                          ? "bg-red-100 text-red-800"
                           : page.status === "error" || page.status === "incomplete"
                             ? "bg-red-100 text-red-800"
                             : "bg-gray-100 text-gray-800"
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
                     </Badge>
                     {page.status !== "planned" ? (
                       <Link href={page.href}>
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                        <Button size="sm" className="bg-red-600 hover:bg-red-700">
                           Open
                         </Button>
                       </Link>

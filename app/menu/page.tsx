@@ -126,7 +126,7 @@ export default function MenuPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
           <p>Loading products...</p>
         </div>
       </div>
@@ -242,7 +242,7 @@ export default function MenuPage() {
                   </p>
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex flex-col min-h-[3rem] justify-center">
-                      <span className="text-lg sm:text-xl font-bold text-green-600">
+                      <span className="text-lg sm:text-xl font-bold text-red-600">
                         LB: ${product.price}
                       </span>
                       <span className="text-sm text-gray-500 min-h-[1.25rem]">
@@ -276,7 +276,7 @@ export default function MenuPage() {
                   </div>
                   <Button
                     size="sm"
-                    className="w-full bg-green-600 hover:bg-green-700 text-xs sm:text-sm"
+                    className="w-full bg-red-600 hover:bg-red-700 text-xs sm:text-sm"
                     onClick={() => addToCart(product)}
                   >
                     Add to Cart
@@ -308,7 +308,7 @@ export default function MenuPage() {
                   key={`page-${page}`}
                   variant={currentPage === page ? "default" : "outline"}
                   size="sm"
-                  className={currentPage === page ? "bg-green-600 hover:bg-green-700" : ""}
+                  className={currentPage === page ? "bg-red-600 hover:bg-red-700" : ""}
                   onClick={() => setCurrentPage(page)}
                 >
                   {page}
@@ -341,11 +341,11 @@ export default function MenuPage() {
           <div className="fixed bottom-4 right-4 left-4 sm:left-auto bg-white rounded-lg shadow-lg p-3 sm:p-4 border max-w-sm sm:max-w-none mx-auto sm:mx-0">
             <div className="flex items-center justify-between mb-2 gap-x-2">
               <span className="font-semibold text-sm sm:text-base">Cart Summary</span>
-              <span className="text-green-600 font-bold text-sm sm:text-base">${cartState.totalPrice.toFixed(2)}</span>
+              <span className="text-red-600 font-bold text-sm sm:text-base">${cartState.totalPrice.toFixed(2)}</span>
             </div>
             <p className="text-xs sm:text-sm text-gray-600 mb-3">{cartState.totalItems} items in cart</p>
             <Link href="/cart">
-              <Button className="w-full bg-green-600 hover:bg-green-700 text-sm py-2">View Cart</Button>
+              <Button className="w-full bg-red-600 hover:bg-red-700 text-sm py-2">View Cart</Button>
             </Link>
           </div>
         )}

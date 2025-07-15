@@ -8,9 +8,12 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    // Add local domain for uploaded images
-    domains: ['localhost', 'https://cannabis-shopping-cart.vercel.app'],
-    // Allow local file system images
+    // Add domains for images (NO protocol here)
+    domains: [
+      'localhost',
+      'cannabis-shopping-cart.vercel.app', // Your Vercel domain (NO https://)
+    ],
+    // Allow Vercel Blob storage and local images
     remotePatterns: [
       {
         protocol: 'http',
@@ -20,12 +23,19 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'https://cannabis-shopping-cart.vercel.app', // Replace with your actual domain
+        hostname: 'cannabis-shopping-cart.vercel.app', // Your actual domain (NO https://)
         pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com', // Vercel Blob storage
+      },
+      {
+        protocol: 'https',
+        hostname: '*.blob.vercel-storage.com', // Alternative Vercel Blob pattern
       }
     ]
   },
-  // Handle large file uploads
   experimental: {
     serverComponentsExternalPackages: [],
   },

@@ -154,7 +154,7 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="relative">
+            <div className="relative flex justify-end">
               <ProductImage
                 src="https://i.ibb.co/fZhhwLS/Apple-Gelato.webp"
                 alt="Premium Cannabis Products"
@@ -274,7 +274,7 @@ export default function HomePage() {
       </section>
 
       {/* Blog Section */}
-      {blogPosts.length > 0 && (
+      {blogPosts.length < 0 && (
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">

@@ -1,21 +1,23 @@
+// /lib/models/Product.ts
 export interface Product {
-  _id?: string // MongoDB ObjectId as string
-  code: string // e.g., XXYY##
+  _id?: string
+  code: string
   name: string
-  category: string
+  category: "Flower" | "Vape" | "Edible" | "Concentrate"
   price: number
-  quantity: number // Stock quantity
+  quantity: number
+  cost?: number
   image: string
+  media: string // Required media field for videos/audio
   description: string
-  nose: string
-  strain: string
-  cost?: number // Admin-only field
+  nose?: string
+  strain: "Indica" | "Sativa" | "Hybrid"
+  isQP: boolean
   featured?: boolean
+  qpPrice?: number
+  rating?: number
   createdAt?: Date
   updatedAt?: Date
-  isQP?: boolean
-  qpPrice?: number
-  rating?: number // Add rating for the menu page
 }
 
 export interface BlogPost {

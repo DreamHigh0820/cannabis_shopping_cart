@@ -33,7 +33,7 @@ function createCustomerTelegramLink(orderData: OrderData): string {
   const orderNumber = `DB-${Date.now().toString().slice(-6)}`
 
   const itemsText = items.map((item) =>
-    `${item.quantity}x ${item.name} (@ ${item.price.toFixed(2)})`
+    `${item.quantity}x ${item.name} ($ ${item.price.toFixed(2)})`
   ).join("\n")
 
   console.log("itemsText", itemsText)
@@ -45,6 +45,12 @@ function createCustomerTelegramLink(orderData: OrderData): string {
   const message = encodeURIComponent(`
 NEW ORDER: #${orderNumber}
 --------------------
+CUSTOMER INFO
+Contact: ${customer.contact}
+Name: ${customer.shippingName}
+Address: ${customer.shippingAddress}
+Notes: ${customer.notes}
+--------------------
 ITEMS
 ${itemsText}
 --------------------
@@ -54,12 +60,6 @@ Shipping Upgrade: ${shipping.upgradeCost.toFixed(2)}
 Discount: -${totalDiscount.toFixed(2)}
 Payment Upcharge: ${payment.upcharge.toFixed(2)}
 Total: ${costs.total.toFixed(2)}
---------------------
-CUSTOMER INFO
-Contact: ${customer.contact}
-Name: ${customer.shippingName}
-Address: ${customer.shippingAddress}
-Notes: ${customer.notes}
 --------------------
 SHIPPING & PAYMENT
 Carrier: ${shipping.carrier}

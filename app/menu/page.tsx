@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Star, Plus, Minus, Filter } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { useCart } from "@/lib/cart-context"
-import ProductImage from "@/components/ProductImage"
+import ProductMediaDisplay from "@/components/ProductMediaDisplay"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
 
@@ -103,7 +103,7 @@ export default function MenuPage() {
     const isQPProduct = product.isQP && product.qpPrice
     const effectivePrice = isQPProduct ? product.qpPrice : product.price
     const unit = isQPProduct ? 'QP' : 'lb'
-    
+
     cartDispatch({
       type: "ADD_ITEM",
       payload: {
@@ -216,14 +216,13 @@ export default function MenuPage() {
           {paginatedProducts.map((product) => {
             const selectedQty = selectedQuantities[product._id] || 1
             return (
-              <Card key={product._id} className="hover:shadow-lg transition-shadow">
+              <Card key={product._id} className="hover:shadow-lg transition-shadow h-auto">
                 <CardHeader className="p-0">
-                  <ProductImage
-                    src={product.image}
-                    alt={product.name}
-                    width={400}
-                    height={400}
-                    className="w-full h-40 sm:h-48 object-cover rounded-t-lg"
+                  <ProductMediaDisplay
+                    product={product}
+                    className="w-full h-52"
+                    imageWidth={400}
+                    imageHeight={144}
                   />
                 </CardHeader>
                 <CardContent className="p-3 sm:p-4">
@@ -237,7 +236,7 @@ export default function MenuPage() {
                     </div>
                   </div>
                   <h3 className="font-semibold mb-2 text-sm sm:text-base line-clamp-2">{product.name}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 mb-3 min-h-16 sm:min-h-20 line-clamp-3 sm:line-clamp-4">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3 min-h-16 sm:min-h-16 line-clamp-3 sm:line-clamp-3">
                     {product.description}
                   </p>
                   <div className="flex justify-between items-center mb-3">
@@ -250,9 +249,9 @@ export default function MenuPage() {
                       </span>
                     </div>
                     <div className="flex items-center space-x-1 sm:space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => updateQuantity(product._id, -1)}
                         className="h-8 w-8 p-0 sm:h-auto sm:w-auto sm:p-2"
                       >
@@ -264,9 +263,9 @@ export default function MenuPage() {
                           {product.isQP ? 'QP' : 'lb'}
                         </span>
                       </div>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => updateQuantity(product._id, 1)}
                         className="h-8 w-8 p-0 sm:h-auto sm:w-auto sm:p-2"
                       >

@@ -4,6 +4,7 @@ import "./globals.css"
 import { AgeVerificationModal } from "@/components/ui/age-verification-modal"
 import { CartProvider } from "@/lib/cart-context"
 import { Inter } from "next/font/google"
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         <CartProvider>
           <AgeVerificationModal />
           {children}
+          <SpeedInsights />
         </CartProvider>
       </body>
     </html>

@@ -8,6 +8,7 @@ import { Leaf, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
 import ProductImage from "@/components/ProductImage"
+import ProductMediaDisplay from "@/components/ProductMediaDisplay"
 import Header from "@/app/components/header"
 import Footer from "@/app/components/footer"
 
@@ -46,7 +47,7 @@ export default function HomePage() {
     const isQPProduct = product.isQP && product.qpPrice
     const effectivePrice = isQPProduct ? product.qpPrice : product.price
     const unit = isQPProduct ? 'QP' : 'lb'
-    
+
     cartDispatch({
       type: "ADD_ITEM",
       payload: {
@@ -202,14 +203,13 @@ export default function HomePage() {
           {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {featuredProducts.map((product) => (
-                <Card key={product._id} className="hover:shadow-lg transition-shadow">
+                <Card key={product._id} className="hover:shadow-lg transition-shadow h-auto">
                   <CardHeader className="p-0">
-                    <ProductImage
-                      src={product.image}
-                      alt={product.name}
-                      width={400}
-                      height={400}
-                      className="w-full h-48 object-cover rounded-t-lg"
+                    <ProductMediaDisplay
+                      product={product}
+                      className="w-full h-52"
+                      imageWidth={400}
+                      imageHeight={144}
                     />
                   </CardHeader>
                   <CardContent className="p-4">
@@ -249,9 +249,9 @@ export default function HomePage() {
                         </Badge>
                       )}
                     </div>
-                    <Button 
-                      size="sm" 
-                      className="w-full bg-red-600 hover:bg-red-700" 
+                    <Button
+                      size="sm"
+                      className="w-full bg-red-600 hover:bg-red-700"
                       onClick={() => addToCart(product)}
                     >
                       Add to Cart

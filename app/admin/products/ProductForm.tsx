@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import ImageUpload from "@/components/ImageUpload"
+import MediaUpload from "@/components/MediaUpload"
 import toast from "react-hot-toast"
 import type { Product } from "@/lib/models/Product"
 
@@ -22,7 +23,9 @@ type FormData = Omit<Product, "_id" | "createdAt" | "updatedAt">
 export default function ProductForm({ product, isEditing = false }: ProductFormProps) {
   const router = useRouter()
   const [imageUrl, setImageUrl] = useState<string>(product?.image || "")
+  const [mediaUrl, setMediaUrl] = useState<string>(product?.media || "")
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
+  const [selectedMediaFile, setSelectedMediaFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
 
@@ -43,6 +46,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       quantity: product?.quantity || 0,
       cost: product?.cost || 0,
       image: product?.image || "",
+      media: product?.media || "",
       description: product?.description || "",
       nose: product?.nose || "",
       strain: product?.strain || "Indica",
@@ -59,6 +63,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
   useEffect(() => {
     if (product) {
       setImageUrl(product.image || "")
+      setMediaUrl(product.media || "")
       reset({
         code: product.code,
         name: product.name,
@@ -67,6 +72,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         quantity: product.quantity,
         cost: product.cost,
         image: product.image,
+        media: product.media,
         description: product.description,
         nose: product.nose,
         strain: product.strain,
@@ -84,13 +90,23 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     setValue("image", newImageUrl)
   }
 
+  // Handle media URL changes (for existing media)
+  const handleMediaChange = (newMediaUrl: string) => {
+    setMediaUrl(newMediaUrl)
+    setValue("media", newMediaUrl)
+  }
+
   // Handle new file selection (don't upload yet)
-  const handleFileChange = (file: File | null) => {
+  const handleImageFileChange = (file: File | null) => {
     setSelectedImageFile(file)
   }
 
-  // Upload image to Vercel Blob
-  const uploadImage = async (file: File): Promise<string> => {
+  const handleMediaFileChange = (file: File | null) => {
+    setSelectedMediaFile(file)
+  }
+
+  // Upload file to Vercel Blob
+  const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData()
     formData.append('file', file)
 
@@ -102,22 +118,25 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     const result = await response.json()
 
     if (!result.success) {
-      throw new Error(result.message || 'Failed to upload image')
+      throw new Error(result.message || 'Failed to upload file')
     }
 
-    return result.imageUrl
+    return result.imageUrl // The API returns imageUrl for any file type
   }
 
-  // Delete uploaded image if product creation fails
-  const deleteUploadedImage = async (imageUrl: string) => {
+  // Delete uploaded file if product creation fails
+  const deleteUploadedFile = async (fileUrl: string, isImage: boolean = true) => {
     try {
-      await fetch('/api/admin/delete-image', {
+      const endpoint = isImage ? '/api/admin/delete-image' : '/api/admin/delete-media'
+      const bodyKey = isImage ? 'imageUrl' : 'mediaUrl'
+      
+      await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl })
+        body: JSON.stringify({ [bodyKey]: fileUrl })
       })
     } catch (error) {
-      console.error('Failed to cleanup uploaded image:', error)
+      console.error(`Failed to cleanup uploaded ${isImage ? 'image' : 'media'}:`, error)
     }
   }
 
@@ -161,6 +180,10 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       errors.push("Product image is required")
     }
 
+    if (!mediaUrl && !selectedMediaFile) {
+      errors.push("Product media is required")
+    }
+
     return errors
   }
 
@@ -168,7 +191,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     // Clear previous validation errors
     setValidationErrors([])
 
-    // Validate form data BEFORE uploading image
+    // Validate form data BEFORE uploading files
     const validationErrors = validateForm(data)
     if (validationErrors.length > 0) {
       setValidationErrors(validationErrors)
@@ -178,24 +201,35 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
     setUploading(true)
     let finalImageUrl = imageUrl || ""
+    let finalMediaUrl = mediaUrl || ""
     let uploadedImageUrl: string | null = null
+    let uploadedMediaUrl: string | null = null
 
     try {
       // Step 1: Upload image to Vercel Blob if a new file is selected
       if (selectedImageFile) {
-        toast.loading('Uploading to Vercel Blob...', { id: 'upload' })
-        uploadedImageUrl = await uploadImage(selectedImageFile)
+        toast.loading('Uploading image to Vercel Blob...', { id: 'upload-image' })
+        uploadedImageUrl = await uploadFile(selectedImageFile)
         finalImageUrl = uploadedImageUrl
-        toast.success('Image uploaded successfully!', { id: 'upload' })
+        toast.success('Image uploaded successfully!', { id: 'upload-image' })
       }
 
-      // Step 2: Prepare product data with final image URL
+      // Step 2: Upload media to Vercel Blob if a new file is selected
+      if (selectedMediaFile) {
+        toast.loading('Uploading media to Vercel Blob...', { id: 'upload-media' })
+        uploadedMediaUrl = await uploadFile(selectedMediaFile)
+        finalMediaUrl = uploadedMediaUrl
+        toast.success('Media uploaded successfully!', { id: 'upload-media' })
+      }
+
+      // Step 3: Prepare product data with final URLs
       const submitData = {
         ...data,
-        image: finalImageUrl
+        image: finalImageUrl,
+        media: finalMediaUrl
       }
 
-      // Step 3: Submit product data
+      // Step 4: Submit product data
       const apiEndpoint = isEditing ? `/api/admin/products/${product?._id}` : "/api/admin/products"
       const method = isEditing ? "PUT" : "POST"
 
@@ -210,9 +244,14 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       if (!response.ok) {
         const errorData = await response.json()
 
-        // If product creation failed and we uploaded an image, delete it
-        if (uploadedImageUrl && !isEditing) {
-          await deleteUploadedImage(uploadedImageUrl)
+        // If product creation failed and we uploaded files, delete them
+        if (!isEditing) {
+          if (uploadedImageUrl) {
+            await deleteUploadedFile(uploadedImageUrl, true)
+          }
+          if (uploadedMediaUrl) {
+            await deleteUploadedFile(uploadedMediaUrl, false)
+          }
         }
 
         throw new Error(errorData.message || "Failed to save product")
@@ -227,10 +266,15 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     } catch (error) {
       console.error('Error saving product:', error)
 
-      // If we uploaded an image but product creation failed, clean it up
-      if (uploadedImageUrl && !isEditing) {
-        await deleteUploadedImage(uploadedImageUrl)
-        toast.error('Product creation failed. Uploaded image has been removed.')
+      // If we uploaded files but product creation failed, clean them up
+      if (!isEditing) {
+        if (uploadedImageUrl) {
+          await deleteUploadedFile(uploadedImageUrl, true)
+        }
+        if (uploadedMediaUrl) {
+          await deleteUploadedFile(uploadedMediaUrl, false)
+        }
+        toast.error('Product creation failed. Uploaded files have been removed.')
       }
 
       if (error instanceof Error) {
@@ -245,14 +289,6 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
   return (
     <div className="space-y-6">
-      {/* Info Banner */}
-      {/* <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
-        <h3 className="text-blue-800 font-medium mb-2">☁️ Vercel Blob Storage</h3>
-        <p className="text-blue-700 text-sm">
-          Images are stored in Vercel Blob storage for both local development and production. Consistent everywhere!
-        </p>
-      </div> */}
-
       {/* Validation Errors Display */}
       {validationErrors.length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
@@ -422,7 +458,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
             <ImageUpload
               currentImage={imageUrl}
               onImageChange={handleImageChange}
-              onFileChange={handleFileChange}
+              onFileChange={handleImageFileChange}
               label="Product Image"
               required={!isEditing}
               uploading={uploading}
@@ -431,6 +467,24 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
             {selectedImageFile && (
               <p className="text-sm text-blue-600">
                 ✓ New image selected: {selectedImageFile.name} (will be uploaded to Vercel Blob when you save)
+              </p>
+            )}
+          </div>
+
+          {/* Media Upload Section - Full Width */}
+          <div className="space-y-2 md:col-span-2">
+            <MediaUpload
+              currentMedia={mediaUrl}
+              onMediaChange={handleMediaChange}
+              onFileChange={handleMediaFileChange}
+              label="Product Media"
+              required={true}
+              uploading={uploading}
+            />
+
+            {selectedMediaFile && (
+              <p className="text-sm text-blue-600">
+                ✓ New media selected: {selectedMediaFile.name} (will be uploaded to Vercel Blob when you save)
               </p>
             )}
           </div>

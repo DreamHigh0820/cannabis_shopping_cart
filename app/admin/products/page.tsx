@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { PlusCircle, Edit, Trash2, Loader2, Star, Trash } from "lucide-react"
+import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX } from "lucide-react"
 import ProductImage from "@/components/ProductImage"
 import type { Product } from "@/lib/models/Product"
 import BackButton from "../../../components/BackButton"
@@ -101,30 +101,30 @@ export default function AdminProductsPage() {
     }
   }
 
+  const getMediaIcon = (mediaUrl?: string) => {
+    if (!mediaUrl) return <FileX className="h-4 w-4 text-gray-300" />
+    
+    if (mediaUrl.includes('video') || mediaUrl.includes('.mp4') || mediaUrl.includes('.avi') || mediaUrl.includes('.mov')) {
+      return <Video className="h-4 w-4 text-blue-500" />
+    } else if (mediaUrl.includes('audio') || mediaUrl.includes('.mp3') || mediaUrl.includes('.wav') || mediaUrl.includes('.ogg')) {
+      return <Music className="h-4 w-4 text-green-500" />
+    }
+    return <FileX className="h-4 w-4 text-gray-300" />
+  }
+
+  const getMediaFileName = (mediaUrl?: string) => {
+    if (!mediaUrl) return "No Media"
+    const urlParts = mediaUrl.split('/')
+    const fileName = urlParts[urlParts.length - 1]
+    return fileName.length > 15 ? fileName.substring(0, 15) + "..." : fileName
+  }
+
   return (
     <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <BackButton to="/admin" />
       <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-y-4 mb-6">
         <h1 className="text-2xl font-bold">Product Management</h1>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={handleCleanupImages}
-            disabled={cleaningUp}
-            className="text-red-600 hover:text-red-700"
-          >
-            {cleaningUp ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Cleaning...
-              </>
-            ) : (
-              <>
-                <Trash className="mr-2 h-4 w-4" />
-                Cleanup Images
-              </>
-            )}
-          </Button>
           <Link href="/admin/products/new">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -158,6 +158,7 @@ export default function AdminProductsPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-16">Image</TableHead>
+                      <TableHead className="w-20">Media</TableHead>
                       <TableHead className="w-24">Code</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead className="w-24">Category</TableHead>
@@ -182,6 +183,14 @@ export default function AdminProductsPage() {
                               height={48}
                               className="object-cover w-full h-full"
                             />
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col items-center gap-1">
+                            {getMediaIcon(product.media)}
+                            <span className="text-xs text-gray-500">
+                              {getMediaFileName(product.media)}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -272,10 +281,12 @@ export default function AdminProductsPage() {
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <h3 className="font-medium text-base truncate">{product.name}</h3>
-                              <Badge variant="outline" className="text-xs mr-2">{product.code}</Badge>
-                              <Badge variant="secondary" className="text-xs capitalize">{product.category}</Badge>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                <Badge variant="outline" className="text-xs">{product.code}</Badge>
+                                <Badge variant="secondary" className="text-xs capitalize">{product.category}</Badge>
+                              </div>
                             </div>
-                            <div className="flex gap-1 ml-2">
+                            <div className="flex flex-col gap-1 ml-2">
                               {product.featured && (
                                 <Badge className="bg-yellow-500 text-white text-xs">Featured</Badge>
                               )}
@@ -284,6 +295,16 @@ export default function AdminProductsPage() {
                               )}
                             </div>
                           </div>
+                          
+                          {/* Media Info */}
+                          {product.media && (
+                            <div className="flex items-center gap-2 mb-2">
+                              {getMediaIcon(product.media)}
+                              <span className="text-xs text-gray-600">
+                                Media: {getMediaFileName(product.media)}
+                              </span>
+                            </div>
+                          )}
                           
                           {/* Pricing Info */}
                           <div className="grid grid-cols-2 gap-2 text-sm mb-3">

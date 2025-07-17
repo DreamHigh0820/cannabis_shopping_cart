@@ -4,89 +4,85 @@ import { put } from '@vercel/blob'
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if BLOB_READ_WRITE_TOKEN is available
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      console.error('BLOB_READ_WRITE_TOKEN is not set')
-      return NextResponse.json({ 
-        success: false, 
-        message: 'Server configuration error: Missing blob storage token' 
-      }, { status: 500 })
-    }
-
-    const data = await request.formData()
-    const file: File | null = data.get('file') as unknown as File
+    const formData = await request.formData()
+    const file = formData.get('file') as File
 
     if (!file) {
-      return NextResponse.json({ 
-        success: false, 
-        message: 'No file uploaded' 
-      }, { status: 400 })
+      return NextResponse.json(
+        { success: false, message: 'No file provided' },
+        { status: 400 }
+      )
     }
 
-    console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type)
+    // Define allowed file types for both images and media
+    const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    const allowedMediaTypes = [
+      'video/mp4', 'video/avi', 'video/quicktime', 'video/x-quicktime', 'video/wmv', 'video/webm',
+      'audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/aac', 'audio/x-m4a'
+    ]
+    
+    const allAllowedTypes = [...allowedImageTypes, ...allowedMediaTypes]
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ 
-        success: false, 
-        message: 'Invalid file type. Only JPEG, PNG, and WebP are allowed.' 
-      }, { status: 400 })
-    }
-
-    // Validate file size (5MB limit)
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    if (file.size > maxSize) {
-      return NextResponse.json({ 
-        success: false, 
-        message: 'File too large. Maximum size is 5MB.' 
-      }, { status: 400 })
-    }
-
-    // Generate unique filename
-    const timestamp = Date.now()
-    const randomSuffix = Math.random().toString(36).substring(2, 8)
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-    const filename = `products/${timestamp}-${randomSuffix}-${originalName}`
-
-    console.log('Uploading to Vercel Blob with filename:', filename)
-
-    // Upload to Vercel Blob
-    const blob = await put(filename, file, {
-      access: 'public',
-      addRandomSuffix: true, // This ensures uniqueness even if filename conflicts
-      token: process.env.BLOB_READ_WRITE_TOKEN,
-    })
-
-    console.log('Upload successful:', blob.url)
-
-    return NextResponse.json({
-      success: true,
-      message: 'File uploaded successfully',
-      imageUrl: blob.url
-    })
-
-  } catch (error) {
-    console.error('Upload error details:', error)
-    
-    // More specific error handling
-    if (error instanceof Error) {
-      if (error.message.includes('token')) {
-        return NextResponse.json({ 
+    if (!allAllowedTypes.includes(file.type)) {
+      return NextResponse.json(
+        { 
           success: false, 
-          message: 'Authentication error with blob storage' 
-        }, { status: 500 })
-      }
-      
-      return NextResponse.json({ 
-        success: false, 
-        message: `Upload failed: ${error.message}` 
-      }, { status: 500 })
+          message: `Invalid file type: ${file.type}. Allowed types: Images (JPEG, PNG, WebP) and Media (MP4, AVI, MOV, WMV, WebM, MP3, WAV, OGG, M4A, AAC)` 
+        },
+        { status: 400 }
+      )
     }
-    
-    return NextResponse.json({ 
-      success: false, 
-      message: 'Failed to upload file' 
-    }, { status: 500 })
+
+    // Set file size limits based on type
+    let maxSize: number
+    if (allowedImageTypes.includes(file.type)) {
+      maxSize = 5 * 1024 * 1024 // 5MB for images
+    } else {
+      maxSize = 50 * 1024 * 1024 // 50MB for media files
+    }
+
+    // Validate file size
+    if (file.size > maxSize) {
+      const maxSizeMB = maxSize / (1024 * 1024)
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: `File too large. Maximum size is ${maxSizeMB}MB for ${allowedImageTypes.includes(file.type) ? 'images' : 'media files'}` 
+        },
+        { status: 400 }
+      )
+    }
+
+    // Generate filename with proper extension
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'bin'
+    const timestamp = Date.now()
+    const randomString = Math.random().toString(36).substring(2, 15)
+    const filename = `${timestamp}-${randomString}.${fileExtension}`
+
+    try {
+      // Upload to Vercel Blob
+      const blob = await put(filename, file, {
+        access: 'public'
+      })
+
+      return NextResponse.json({
+        success: true,
+        imageUrl: blob.url, // Keep same property name for compatibility
+        message: `${allowedImageTypes.includes(file.type) ? 'Image' : 'Media file'} uploaded successfully`
+      })
+    } catch (uploadError) {
+      console.error('Vercel Blob upload error:', uploadError)
+      return NextResponse.json(
+        { success: false, message: 'Failed to upload file to storage' },
+        { status: 500 }
+      )
+    }
+  } catch (error) {
+    console.error('Upload API error:', error)
+    return NextResponse.json(
+      { success: false, message: 'Failed to process upload request' },
+      { status: 500 }
+    )
   }
 }

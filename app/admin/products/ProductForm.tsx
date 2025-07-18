@@ -168,9 +168,9 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       errors.push("Product name is required")
     }
 
-    if (!data.code?.trim()) {
-      errors.push("Product code is required")
-    }
+    // if (!data.code?.trim()) {
+    //   errors.push("Product code is required")
+    // }
 
     // if (!data.description?.trim()) {
     //   errors.push("Product description is required")
@@ -319,13 +319,14 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
           <div className="space-y-2">
             <Label htmlFor="code">
-              Product Code <span className="text-red-500">*</span>
+              Product Code (Optional)
+               {/* <span className="text-red-500">*</span> */}
             </Label>
             <Input
               id="code"
               {...register("code", {
-                required: "Product code is required",
-                validate: value => value?.trim() ? true : "Product code cannot be empty"
+                // required: "Product code is required",
+                // validate: value => value?.trim() ? true : "Product code cannot be empty"
               })}
             />
             {errors.code && <p className="text-sm text-red-500">{errors.code.message}</p>}

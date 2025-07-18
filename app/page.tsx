@@ -46,7 +46,7 @@ export default function HomePage() {
   const addToCart = (product: Product) => {
     const isQPProduct = product.isQP && product.qpPrice
     const effectivePrice = isQPProduct ? product.qpPrice : product.price
-    const unit = isQPProduct ? 'QP' : 'lb'
+    const unit = isQPProduct ? 'QP' : 'LB'
 
     cartDispatch({
       type: "ADD_ITEM",
@@ -63,7 +63,7 @@ export default function HomePage() {
       },
     })
 
-    const unitText = isQPProduct ? "QP" : "lb"
+    const unitText = isQPProduct ? "QP" : "LB"
     setNotification(`${product.name} (1 ${unitText}) added to cart!`)
     setTimeout(() => setNotification(null), 3000)
   }
@@ -217,10 +217,13 @@ export default function HomePage() {
                       <Badge variant="secondary" className="mb-2 capitalize">
                         {product.category}
                       </Badge>
-                      <div className="flex items-center">
+                      {/* <div className="flex items-center">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
-                      </div>
+                      </div> */}
+                      { product.featured && <div className="flex items-center">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      </div>}
                     </div>
                     <h3 className="font-semibold mb-2">{product.name}</h3>
                     <p className="text-sm text-gray-600 mb-4 min-h-16 line-clamp-3">
@@ -234,12 +237,12 @@ export default function HomePage() {
                               ${product.qpPrice}/QP
                             </span>
                             <span className="text-sm text-gray-500 line-through">
-                              ${product.price}/lb
+                              ${product.price}/LB
                             </span>
                           </>
                         ) : (
                           <span className="text-lg font-bold text-red-600">
-                            ${product.price}/lb
+                            ${product.price}/LB
                           </span>
                         )}
                       </div>

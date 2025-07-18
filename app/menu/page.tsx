@@ -25,6 +25,7 @@ interface Product {
   strain?: string
   isQP?: boolean
   qpPrice?: number
+  featured?: boolean
 }
 
 export default function MenuPage() {
@@ -102,7 +103,7 @@ export default function MenuPage() {
     const quantity = selectedQuantities[product._id] || 1
     const isQPProduct = product.isQP && product.qpPrice
     const effectivePrice = isQPProduct ? product.qpPrice : product.price
-    const unit = isQPProduct ? 'QP' : 'lb'
+    const unit = isQPProduct ? 'QP' : 'LB'
 
     cartDispatch({
       type: "ADD_ITEM",
@@ -230,10 +231,13 @@ export default function MenuPage() {
                     <Badge variant="secondary" className="mb-2 capitalize text-xs">
                       {product.category}
                     </Badge>
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
-                    </div>
+                    </div> */}
+                    {product.featured && <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    </div>}
                   </div>
                   <h3 className="font-semibold mb-2 text-sm sm:text-base line-clamp-2">{product.name}</h3>
                   <p className="text-xs sm:text-sm text-gray-600 mb-3 min-h-16 sm:min-h-16 line-clamp-3 sm:line-clamp-3">
@@ -260,7 +264,7 @@ export default function MenuPage() {
                       <div className="flex flex-col items-center">
                         <span className="font-medium w-6 sm:w-8 text-center text-sm sm:text-base">{selectedQty}</span>
                         <span className="text-xs text-gray-500">
-                          {product.isQP ? 'QP' : 'lb'}
+                          {product.isQP ? 'QP' : 'LB'}
                         </span>
                       </div>
                       <Button

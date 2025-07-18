@@ -106,7 +106,7 @@ export default function CheckoutPage() {
       },
       items: cartState.items.map(item => ({
         ...item,
-        unit: item.unit || (item.isQP ? 'QP' : 'lb'), // Ensure unit is included
+        unit: item.unit || (item.isQP ? 'QP' : 'LB'), // Ensure unit is included
         totalPrice: item.price * item.quantity // Use the price field directly
       })),
       shipping: {
@@ -205,7 +205,7 @@ export default function CheckoutPage() {
                 <h3 className="font-semibold text-sm text-gray-700 uppercase tracking-wide">Items</h3>
                 <div className="space-y-3 text-sm">
                   {cartState.items.map((item, index) => {
-                    const unit = item.unit || (item.isQP ? 'QP' : 'lb')
+                    const unit = item.unit || (item.isQP ? 'QP' : 'LB')
                     return (
                       <div key={index} className="border-l-2 border-gray-200 pl-3">
                         <div className="flex justify-between items-start">

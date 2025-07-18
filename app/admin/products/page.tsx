@@ -200,7 +200,7 @@ export default function AdminProductsPage() {
                         <TableCell className="capitalize">{product.category}</TableCell>
                         <TableCell>
                           ${product.price.toFixed(2)}
-                          {!product.isQP && <span className="text-xs text-gray-500">/lb</span>}
+                          {!product.isQP && <span className="text-xs text-gray-500">/LB</span>}
                         </TableCell>
                         <TableCell>${product.cost?.toFixed(2) || "N/A"}</TableCell>
                         <TableCell>{product.quantity}</TableCell>
@@ -312,7 +312,7 @@ export default function AdminProductsPage() {
                               <span className="text-gray-500">Price: </span>
                               <span className="font-medium">
                                 ${product.price.toFixed(2)}
-                                {!product.isQP && <span className="text-xs text-gray-500">/lb</span>}
+                                {!product.isQP && <span className="text-xs text-gray-500">/LB</span>}
                               </span>
                             </div>
                             <div>
@@ -332,20 +332,20 @@ export default function AdminProductsPage() {
                           </div>
                           
                           {/* Action Buttons */}
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap justify-end">
                             <Button
                               variant={product.featured ? "default" : "outline"}
                               size="sm"
                               onClick={() => handleToggleFeatured(product._id!, product.featured || false)}
                               className={`${product.featured ? "bg-yellow-500 hover:bg-yellow-600 text-white" : "hover:bg-yellow-50"}`}
                             >
-                              <Star className={`h-3 w-3 mr-1 ${product.featured ? 'fill-white' : ''}`} />
-                              {product.featured ? "Featured" : "Feature"}
+                              <Star className={`h-3 w-3 ${product.featured ? 'fill-white' : ''}`} />
+                              {/* {product.featured ? "Featured" : "Feature"} */}
                             </Button>
                             <Link href={`/admin/products/edit/${product._id}`}>
                               <Button variant="outline" size="sm">
-                                <Edit className="h-3 w-3 mr-1" />
-                                Edit
+                                <Edit className="h-3 w-3" />
+                                {/* Edit */}
                               </Button>
                             </Link>
                             <Button 
@@ -353,8 +353,8 @@ export default function AdminProductsPage() {
                               size="sm" 
                               onClick={() => handleDelete(product._id!)}
                             >
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Delete
+                              <Trash2 className="h-3 w-3" />
+                              {/* Delete */}
                             </Button>
                           </div>
                         </div>

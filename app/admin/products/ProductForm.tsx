@@ -172,9 +172,9 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       errors.push("Product code is required")
     }
 
-    if (!data.description?.trim()) {
-      errors.push("Product description is required")
-    }
+    // if (!data.description?.trim()) {
+    //   errors.push("Product description is required")
+    // }
 
     if (!imageUrl && !selectedImageFile) {
       errors.push("Product image is required")
@@ -400,14 +400,15 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
           <div className="space-y-2">
             <Label htmlFor="quantity">
-              Quantity <span className="text-red-500">*</span>
+              Quantity (Optional)
+              {/* <span className="text-red-500"> *</span> */}
             </Label>
             <Input
               id="quantity"
               type="number"
               min="0"
               {...register("quantity", {
-                required: "Quantity is required",
+                // required: "Quantity is required",
                 valueAsNumber: true,
                 min: { value: 0, message: "Quantity cannot be negative" },
               })}
@@ -433,7 +434,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
             {errors.cost && <p className="text-sm text-red-500">{errors.cost.message}</p>}
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="rating">
               Rating (0-5) <span className="text-red-500">*</span>
             </Label>
@@ -451,7 +452,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
               })}
             />
             {errors.rating && <p className="text-sm text-red-500">{errors.rating.message}</p>}
-          </div>
+          </div> */}
 
           {/* Image Upload Section - Full Width */}
           <div className="space-y-2 md:col-span-2">
@@ -525,13 +526,14 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="description">
-              Description <span className="text-red-500">*</span>
+              Description (Optional)
+              {/* <span className="text-red-500"> *</span> */}
             </Label>
             <Textarea
               id="description"
               {...register("description", {
-                required: "Description is required",
-                validate: value => value?.trim() ? true : "Description cannot be empty"
+                // required: "Description is required",
+                // validate: value => value?.trim() ? true : "Description cannot be empty"
               })}
             />
             {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}

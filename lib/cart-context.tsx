@@ -7,12 +7,12 @@ export interface CartItem {
   id: string // Use product _id (ObjectId as string)
   name: string
   category: string
-  price: number // This will be the effective price (QP price for QP products, regular price for lb products)
+  price: number // This will be the effective price (QP price for QP products, regular price for LB products)
   quantity: number
   image: string
   isQP?: boolean
   qpPrice?: number
-  unit?: string // 'QP' or 'lb'
+  unit?: string // 'QP' or 'LB'
 }
 
 interface CartState {

@@ -134,7 +134,8 @@ export default function MediaUpload({
   return (
     <div className="space-y-4">
       <Label className="text-sm font-medium">
-        {label} {required && <span className="text-red-500">*</span>}
+        {label} (Optional) 
+        {/* {required && <span className="text-red-500">*</span>} */}
       </Label>
       
       {/* Media Preview */}

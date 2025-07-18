@@ -180,9 +180,9 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       errors.push("Product image is required")
     }
 
-    if (!mediaUrl && !selectedMediaFile) {
-      errors.push("Product media is required")
-    }
+    // if (!mediaUrl && !selectedMediaFile) {
+    //   errors.push("Product media is required")
+    // }
 
     return errors
   }

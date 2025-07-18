@@ -53,7 +53,7 @@ export default function CartPage() {
 
   // Helper function to get price display
   const getPriceDisplay = (item: any) => {
-    const unit = item.unit || (item.isQP ? 'QP' : 'LB')
+    const unit = item.unit || (item.isQP ? 'QP' : (item.category === 'Vape' || item.category === 'Edible') ? 'PC' : 'LB')
     return (
       <div className="text-sm">
         <p className="font-medium">${item.price.toFixed(2)}/{unit}</p>
@@ -119,7 +119,7 @@ export default function CartPage() {
               <CardContent className="p-0">
                 <div className="divide-y">
                   {cartState.items.map((item, index) => {
-                    const unit = item.unit || (item.isQP ? 'QP' : 'LB')
+                    const unit = item.unit || (item.isQP ? 'QP' : (item.category === 'Vape' || item.category === 'Edible') ? 'PC' : 'LB')
                     return (
                       <div key={index} className="p-4 sm:p-6">
                         {/* Mobile Layout */}

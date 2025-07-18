@@ -1,20 +1,40 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX, Search, Filter, X } from "lucide-react"
 import ProductImage from "@/components/ProductImage"
 import type { Product } from "@/lib/models/Product"
 import BackButton from "../../../components/BackButton"
+
+interface FilterState {
+  category: string
+  featured: string
+  qp: string
+  inStock: string
+  hasMedia: string
+}
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [cleaningUp, setCleaningUp] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filters, setFilters] = useState<FilterState>({
+    category: "all",
+    featured: "all",
+    qp: "all",
+    inStock: "all",
+    hasMedia: "all"
+  })
+  const [sortBy, setSortBy] = useState("name")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
 
   useEffect(() => {
     fetchProducts()
@@ -41,6 +61,112 @@ export default function AdminProductsPage() {
     }
   }
 
+  // Get unique categories from products
+  const categories = useMemo(() => {
+    const uniqueCategories = [...new Set(products.map(product => product.category))]
+    return uniqueCategories.sort()
+  }, [products])
+
+  // Filter and search products
+  const filteredProducts = useMemo(() => {
+    let filtered = products.filter(product => {
+      // Search filter
+      const searchLower = searchTerm.toLowerCase()
+      const matchesSearch = !searchTerm ||
+        product.name.toLowerCase().includes(searchLower) ||
+        product.code?.toLowerCase().includes(searchLower) ||
+        product.category.toLowerCase().includes(searchLower)
+
+      // Category filter
+      const matchesCategory = filters.category === "all" || product.category === filters.category
+
+      // Featured filter
+      const matchesFeatured = filters.featured === "all" ||
+        (filters.featured === "yes" && product.featured) ||
+        (filters.featured === "no" && !product.featured)
+
+      // QP filter
+      const matchesQP = filters.qp === "all" ||
+        (filters.qp === "yes" && product.isQP) ||
+        (filters.qp === "no" && !product.isQP)
+
+      // Stock filter
+      const matchesStock = filters.inStock === "all" ||
+        (filters.inStock === "yes" && product.quantity > 0) ||
+        (filters.inStock === "no" && product.quantity === 0)
+
+      // Media filter
+      const matchesMedia = filters.hasMedia === "all" ||
+        (filters.hasMedia === "yes" && product.media) ||
+        (filters.hasMedia === "no" && !product.media)
+
+      return matchesSearch && matchesCategory && matchesFeatured && matchesQP && matchesStock && matchesMedia
+    })
+
+    // Sort products
+    filtered.sort((a, b) => {
+      let aValue: any, bValue: any
+
+      switch (sortBy) {
+        case "name":
+          aValue = a.name.toLowerCase()
+          bValue = b.name.toLowerCase()
+          break
+        case "price":
+          aValue = a.price
+          bValue = b.price
+          break
+        case "cost":
+          aValue = a.cost || 0
+          bValue = b.cost || 0
+          break
+        case "quantity":
+          aValue = a.quantity
+          bValue = b.quantity
+          break
+        case "category":
+          aValue = a.category.toLowerCase()
+          bValue = b.category.toLowerCase()
+          break
+        case "featured":
+          aValue = a.featured ? 1 : 0
+          bValue = b.featured ? 1 : 0
+          break
+        default:
+          aValue = a.name.toLowerCase()
+          bValue = b.name.toLowerCase()
+      }
+
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1
+      return 0
+    })
+
+    return filtered
+  }, [products, searchTerm, filters, sortBy, sortOrder])
+
+  const handleFilterChange = (key: keyof FilterState, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }))
+  }
+
+  const clearAllFilters = () => {
+    setSearchTerm("")
+    setFilters({
+      category: "all",
+      featured: "all",
+      qp: "all",
+      inStock: "all",
+      hasMedia: "all"
+    })
+    setSortBy("name")
+    setSortOrder("asc")
+  }
+
+  const hasActiveFilters = searchTerm ||
+    Object.values(filters).some(value => value !== "all") ||
+    sortBy !== "name" ||
+    sortOrder !== "asc"
+
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
       try {
@@ -63,7 +189,7 @@ export default function AdminProductsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ featured: !currentFeaturedStatus })
       })
-      
+
       if (response.ok) {
         fetchProducts() // Refresh the list
       } else {
@@ -85,9 +211,9 @@ export default function AdminProductsPage() {
       const response = await fetch('/api/admin/cleanup-images', {
         method: 'POST'
       })
-      
+
       const result = await response.json()
-      
+
       if (result.success) {
         alert(`Cleanup completed!\n${result.message}`)
       } else {
@@ -103,7 +229,7 @@ export default function AdminProductsPage() {
 
   const getMediaIcon = (mediaUrl?: string) => {
     if (!mediaUrl) return <FileX className="h-4 w-4 text-gray-300" />
-    
+
     if (mediaUrl.includes('video') || mediaUrl.includes('.mp4') || mediaUrl.includes('.avi') || mediaUrl.includes('.mov')) {
       return <Video className="h-4 w-4 text-blue-500" />
     } else if (mediaUrl.includes('audio') || mediaUrl.includes('.mp3') || mediaUrl.includes('.wav') || mediaUrl.includes('.ogg')) {
@@ -120,7 +246,7 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="max-w-7xl min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl min-h-screen mx-auto py-8">
       <BackButton to="/admin" />
       <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-y-4 mb-6">
         <h1 className="text-2xl font-bold">Product Management</h1>
@@ -133,22 +259,158 @@ export default function AdminProductsPage() {
           </Link>
         </div>
       </div>
-      
+
+      {/* Search and Filter Section */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Search & Filter
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search by name, code, or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          {/* Filter Controls */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="flower">Flower</SelectItem>
+                  <SelectItem value="vape">Vape</SelectItem>
+                  <SelectItem value="edible">Edible</SelectItem>
+                  <SelectItem value="concentrate">Concentrate</SelectItem>
+                </SelectContent>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.featured} onValueChange={(value) => handleFilterChange("featured", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Featured" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Products</SelectItem>
+                <SelectItem value="yes">Featured Only</SelectItem>
+                <SelectItem value="no">Non-Featured</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.qp} onValueChange={(value) => handleFilterChange("qp", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="QP Products" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Products</SelectItem>
+                <SelectItem value="yes">QP Products</SelectItem>
+                <SelectItem value="no">Non-QP Products</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.inStock} onValueChange={(value) => handleFilterChange("inStock", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Stock Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Products</SelectItem>
+                <SelectItem value="yes">In Stock</SelectItem>
+                <SelectItem value="no">Out of Stock</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.hasMedia} onValueChange={(value) => handleFilterChange("hasMedia", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Media" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Products</SelectItem>
+                <SelectItem value="yes">Has Media</SelectItem>
+                <SelectItem value="no">No Media</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
+              const [field, order] = value.split('-')
+              setSortBy(field)
+              setSortOrder(order as "asc" | "desc")
+            }}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+                <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                <SelectItem value="price-asc">Price (Low to High)</SelectItem>
+                <SelectItem value="price-desc">Price (High to Low)</SelectItem>
+                <SelectItem value="quantity-asc">Stock (Low to High)</SelectItem>
+                <SelectItem value="quantity-desc">Stock (High to Low)</SelectItem>
+                <SelectItem value="category-asc">Category (A-Z)</SelectItem>
+                <SelectItem value="featured-desc">Featured First</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Clear Filters Button */}
+          {hasActiveFilters && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllFilters}
+                className="text-sm"
+              >
+                <X className="h-4 w-4 mr-1" />
+                Clear All Filters
+              </Button>
+              <span className="text-sm text-gray-500">
+                Showing {filteredProducts.length} of {products.length} products
+              </span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
-          <CardTitle>All Products ({products.length})</CardTitle>
+          <CardTitle>
+            All Products ({filteredProducts.length}{filteredProducts.length !== products.length && ` of ${products.length}`})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <Loader2 className="h-8 w-8 animate-spin" />
             </div>
-          ) : products.length === 0 ? (
+          ) : filteredProducts.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No products found.</p>
-              <Link href="/admin/products/new">
-                <Button>Add Your First Product</Button>
-              </Link>
+              {products.length === 0 ? (
+                <>
+                  <p className="text-gray-500 mb-4">No products found.</p>
+                  <Link href="/admin/products/new">
+                    <Button>Add Your First Product</Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="text-gray-500 mb-4">No products match your current filters.</p>
+                  <Button variant="outline" onClick={clearAllFilters}>
+                    Clear Filters
+                  </Button>
+                </>
+              )}
             </div>
           ) : (
             <>
@@ -172,7 +434,7 @@ export default function AdminProductsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {products.map((product) => (
+                    {filteredProducts.map((product) => (
                       <TableRow key={product._id}>
                         <TableCell>
                           <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-gray-100">
@@ -200,10 +462,14 @@ export default function AdminProductsPage() {
                         <TableCell className="capitalize">{product.category}</TableCell>
                         <TableCell>
                           ${product.price.toFixed(2)}
-                          {!product.isQP && <span className="text-xs text-gray-500">/LB</span>}
+                          {<span className="text-xs text-gray-500">{(product.category === 'Vape' || product.category === 'Edible') ? '/PC' : '/LB'}</span>}
                         </TableCell>
                         <TableCell>${product.cost?.toFixed(2) || "N/A"}</TableCell>
-                        <TableCell>{product.quantity}</TableCell>
+                        <TableCell>
+                          <span className={product.quantity === 0 || product.quantity === null ? "text-red-500 font-medium" : ""}>
+                            {product.quantity === null ? '0' : product.quantity}
+                          </span>
+                        </TableCell>
                         <TableCell className="text-center">
                           <Badge variant={product.isQP ? "default" : "secondary"} className="text-xs">
                             {product.isQP ? "Yes" : "No"}
@@ -242,9 +508,9 @@ export default function AdminProductsPage() {
                                 <Edit className="h-3 w-3" />
                               </Button>
                             </Link>
-                            <Button 
-                              variant="destructive" 
-                              size="icon" 
+                            <Button
+                              variant="destructive"
+                              size="icon"
                               className="h-8 w-8"
                               onClick={() => handleDelete(product._id!)}
                               title="Delete product"
@@ -261,7 +527,7 @@ export default function AdminProductsPage() {
 
               {/* Mobile Card View */}
               <div className="lg:hidden space-y-4">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                   <Card key={product._id} className="border">
                     <CardContent className="p-4">
                       <div className="flex gap-4">
@@ -275,7 +541,7 @@ export default function AdminProductsPage() {
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        
+
                         {/* Product Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between items-start mb-2">
@@ -295,7 +561,7 @@ export default function AdminProductsPage() {
                               )}
                             </div>
                           </div>
-                          
+
                           {/* Media Info */}
                           {product.media && (
                             <div className="flex items-center gap-2 mb-2">
@@ -305,19 +571,21 @@ export default function AdminProductsPage() {
                               </span>
                             </div>
                           )}
-                          
+
                           {/* Pricing Info */}
                           <div className="grid grid-cols-2 gap-2 text-sm mb-3">
                             <div>
                               <span className="text-gray-500">Price: </span>
                               <span className="font-medium">
                                 ${product.price.toFixed(2)}
-                                {!product.isQP && <span className="text-xs text-gray-500">/LB</span>}
+                                {!product.isQP && <span className="text-xs text-gray-500">{(product.category === 'Vape' || product.category === 'Edible') ? '/PC' : '/LB'}</span>}
                               </span>
                             </div>
                             <div>
                               <span className="text-gray-500">Stock: </span>
-                              <span className="font-medium">{product.quantity}</span>
+                              <span className={`font-medium ${product.quantity === 0 ? "text-red-500" : ""}`}>
+                                {product.quantity}
+                              </span>
                             </div>
                             {product.qpPrice && (
                               <div>
@@ -330,7 +598,7 @@ export default function AdminProductsPage() {
                               <span className="font-medium">${product.cost?.toFixed(2) || "N/A"}</span>
                             </div>
                           </div>
-                          
+
                           {/* Action Buttons */}
                           <div className="flex items-center gap-2 flex-wrap justify-end">
                             <Button
@@ -340,21 +608,18 @@ export default function AdminProductsPage() {
                               className={`${product.featured ? "bg-yellow-500 hover:bg-yellow-600 text-white" : "hover:bg-yellow-50"}`}
                             >
                               <Star className={`h-3 w-3 ${product.featured ? 'fill-white' : ''}`} />
-                              {/* {product.featured ? "Featured" : "Feature"} */}
                             </Button>
                             <Link href={`/admin/products/edit/${product._id}`}>
                               <Button variant="outline" size="sm">
                                 <Edit className="h-3 w-3" />
-                                {/* Edit */}
                               </Button>
                             </Link>
-                            <Button 
-                              variant="destructive" 
-                              size="sm" 
+                            <Button
+                              variant="destructive"
+                              size="sm"
                               onClick={() => handleDelete(product._id!)}
                             >
                               <Trash2 className="h-3 w-3" />
-                              {/* Delete */}
                             </Button>
                           </div>
                         </div>

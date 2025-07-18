@@ -103,7 +103,7 @@ export default function MenuPage() {
     const quantity = selectedQuantities[product._id] || 1
     const isQPProduct = product.isQP && product.qpPrice
     const effectivePrice = isQPProduct ? product.qpPrice : product.price
-    const unit = isQPProduct ? 'QP' : 'LB'
+    const unit = isQPProduct ? "QP" : product.category === 'Vape' || product.category === 'Edible' ? "PC" : "LB"
 
     cartDispatch({
       type: "ADD_ITEM",
@@ -246,7 +246,7 @@ export default function MenuPage() {
                   <div className="flex justify-between items-center mb-3">
                     <div className="flex flex-col min-h-[3rem] justify-center">
                       <span className="text-lg sm:text-xl font-bold text-red-600">
-                        LB: ${product.price}
+                        {(product.category === 'Vape' || product.category === 'Edible') ? 'PC' : 'LB'} ${product.price}
                       </span>
                       <span className="text-sm text-gray-500 min-h-[1.25rem]">
                         {product.isQP && product.qpPrice ? `QP: ${product.qpPrice}` : ''}
@@ -264,7 +264,7 @@ export default function MenuPage() {
                       <div className="flex flex-col items-center">
                         <span className="font-medium w-6 sm:w-8 text-center text-sm sm:text-base">{selectedQty}</span>
                         <span className="text-xs text-gray-500">
-                          {product.isQP ? 'QP' : 'LB'}
+                          {product.isQP ? 'QP' : (product.category === 'Vape' || product.category === 'Edible') ? 'PC' : 'LB'}
                         </span>
                       </div>
                       <Button

@@ -62,8 +62,8 @@ export default function HomePage() {
         unit: unit, // Add unit information
       },
     })
-
-    const unitText = isQPProduct ? "QP" : "LB"
+    console.log("product.category", product.category)
+    const unitText = isQPProduct ? "QP" : product.category === 'Vape' || product.category === 'Edible' ? "PC" : "LB"
     setNotification(`${product.name} (1 ${unitText}) added to cart!`)
     setTimeout(() => setNotification(null), 3000)
   }
@@ -221,7 +221,7 @@ export default function HomePage() {
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
                       </div> */}
-                      { product.featured && <div className="flex items-center">
+                      {product.featured && <div className="flex items-center">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       </div>}
                     </div>
@@ -232,19 +232,19 @@ export default function HomePage() {
                     <div className="flex justify-between items-center mb-3">
                       <div className="flex flex-col">
                         {product.isQP && product.qpPrice ? (
-                          <>
                             <span className="text-lg font-bold text-red-600">
                               ${product.qpPrice}/QP
                             </span>
-                            <span className="text-sm text-gray-500 line-through">
-                              ${product.price}/LB
-                            </span>
-                          </>
+                        ) : (product.category === 'Vape' || product.category === 'Edible') ? (
+                          <span className="text-lg font-bold text-red-600">
+                            ${product.price}/PC
+                          </span>
                         ) : (
                           <span className="text-lg font-bold text-red-600">
                             ${product.price}/LB
                           </span>
-                        )}
+                        )
+                        }
                       </div>
                       {product.isQP && (
                         <Badge variant="outline" className="text-xs">

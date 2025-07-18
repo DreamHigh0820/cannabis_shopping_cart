@@ -194,7 +194,7 @@ export default function AdminProductsPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-xs">{product.code}</Badge>
+                          <Badge variant="outline" className="text-xs">{product.code ? (product.code) : ("N/A")}</Badge>
                         </TableCell>
                         <TableCell className="font-medium">{product.name}</TableCell>
                         <TableCell className="capitalize">{product.category}</TableCell>

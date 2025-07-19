@@ -372,6 +372,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
                   <SelectContent>
                     <SelectItem value="Indica">Indica</SelectItem>
                     <SelectItem value="Sativa">Sativa</SelectItem>
+                    <SelectItem value="Hybrid">Hybrid</SelectItem>
                     <SelectItem value="Indica-Dominant-Hybrid">Indica Dominant Hybrid</SelectItem>
                     <SelectItem value="Sativa-Dominant-Hybrid">Sativa Dominant Hybrid</SelectItem>
                   </SelectContent>

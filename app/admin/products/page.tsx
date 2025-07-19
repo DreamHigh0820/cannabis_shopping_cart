@@ -527,16 +527,16 @@ export default function AdminProductsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          { (product.isQP && product.qpPrice) ?
-                              (<div className="flex flex-col">
-                                <span className="text-sm">
-                                  ${product.qpPrice.toFixed(2)}
-                                  <span className="text-xs">/QP</span>
-                                </span>
-                              </div>
-                          ) : (
-                            "N/A"
-                          )}
+                          {(product.isQP && product.qpPrice) ?
+                            (<div className="flex flex-col">
+                              <span className="text-sm">
+                                ${product.qpPrice.toFixed(2)}
+                                <span className="text-xs">/QP</span>
+                              </span>
+                            </div>
+                            ) : (
+                              "N/A"
+                            )}
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge variant={product.isOnSale ? "destructive" : "secondary"} className="text-xs">
@@ -611,8 +611,13 @@ export default function AdminProductsPage() {
                               </div>
                             </div>
                             <div className="flex flex-col gap-1 ml-2">
-                              {product.featured && (
+                              {/* {product.featured && (
                                 <Badge className="bg-yellow-500 text-white text-xs">Featured</Badge>
+                              )} */}
+                              {product.nose && (
+                                <div className="flex items-center">
+                                  <span className="text-red-600 font-bold text-sm">{product.nose}</span>
+                                </div>
                               )}
                               {product.isQP && (
                                 <Badge variant="default" className="text-xs">QP</Badge>

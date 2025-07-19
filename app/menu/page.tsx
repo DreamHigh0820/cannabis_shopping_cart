@@ -28,6 +28,7 @@ interface Product {
   featured?: boolean
   isOnSale?: boolean
   salePrice?: number
+  nose?: string
 }
 
 export default function MenuPage() {
@@ -261,9 +262,14 @@ export default function MenuPage() {
                         </Badge>
                       )}
                     </div>
-                    {product.featured && (
+                    {/* {product.featured && (
                       <div className="flex items-center">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      </div>
+                    )} */}
+                    {product.nose && (
+                      <div className="flex items-center">
+                        <span className="text-red-600 font-bold text-sm">{product.nose}</span>
                       </div>
                     )}
                   </div>

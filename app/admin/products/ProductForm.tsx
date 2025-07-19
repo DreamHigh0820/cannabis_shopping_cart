@@ -54,11 +54,14 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       featured: product?.featured || false,
       qpPrice: product?.qpPrice || 0,
       rating: product?.rating || 4.0,
+      isOnSale: product?.isOnSale || false,
+      salePrice: product?.salePrice || 0,
     },
   })
 
-  // Watch the isQP checkbox value
+  // Watch the isQP and isOnSale checkbox values
   const isQPChecked = watch("isQP")
+  const isOnSaleChecked = watch("isOnSale")
 
   useEffect(() => {
     if (product) {
@@ -80,6 +83,8 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         featured: product.featured,
         qpPrice: product.qpPrice || 0,
         rating: product.rating || 4.0,
+        isOnSale: product.isOnSale || false,
+        salePrice: product.salePrice || 0,
       })
     }
   }, [product, reset])
@@ -163,26 +168,24 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       errors.push("QP price must be greater than 0 when QP is selected")
     }
 
+    // Validate sale price if on sale is checked
+    if (data.isOnSale && (!data.salePrice || data.salePrice <= 0)) {
+      errors.push("Sale price must be greater than 0 when item is on sale")
+    }
+
+    // Validate that sale price is less than regular price
+    if (data.isOnSale && data.salePrice && data.price && data.salePrice >= data.price) {
+      errors.push("Sale price must be less than the regular price")
+    }
+
     // Validate required text fields
     if (!data.name?.trim()) {
       errors.push("Product name is required")
     }
 
-    // if (!data.code?.trim()) {
-    //   errors.push("Product code is required")
-    // }
-
-    // if (!data.description?.trim()) {
-    //   errors.push("Product description is required")
-    // }
-
     if (!imageUrl && !selectedImageFile) {
       errors.push("Product image is required")
     }
-
-    // if (!mediaUrl && !selectedMediaFile) {
-    //   errors.push("Product media is required")
-    // }
 
     return errors
   }
@@ -320,14 +323,10 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
           <div className="space-y-2">
             <Label htmlFor="code">
               Product Code (Optional)
-               {/* <span className="text-red-500">*</span> */}
             </Label>
             <Input
               id="code"
-              {...register("code", {
-                // required: "Product code is required",
-                // validate: value => value?.trim() ? true : "Product code cannot be empty"
-              })}
+              {...register("code")}
             />
             {errors.code && <p className="text-sm text-red-500">{errors.code.message}</p>}
           </div>
@@ -373,7 +372,8 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
                   <SelectContent>
                     <SelectItem value="Indica">Indica</SelectItem>
                     <SelectItem value="Sativa">Sativa</SelectItem>
-                    <SelectItem value="Hybrid">Hybrid</SelectItem>
+                    <SelectItem value="Indica-Dominant-Hybrid">Indica Dominant Hybrid</SelectItem>
+                    <SelectItem value="Sativa-Dominant-Hybrid">Sativa Dominant Hybrid</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -402,14 +402,12 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
           <div className="space-y-2">
             <Label htmlFor="quantity">
               Quantity (Optional)
-              {/* <span className="text-red-500"> *</span> */}
             </Label>
             <Input
               id="quantity"
               type="number"
               min="0"
               {...register("quantity", {
-                // required: "Quantity is required",
                 valueAsNumber: true,
                 min: { value: 0, message: "Quantity cannot be negative" },
               })}
@@ -434,26 +432,6 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
             />
             {errors.cost && <p className="text-sm text-red-500">{errors.cost.message}</p>}
           </div>
-
-          {/* <div className="space-y-2">
-            <Label htmlFor="rating">
-              Rating (0-5) <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="rating"
-              type="number"
-              step="0.1"
-              min="0"
-              max="5"
-              {...register("rating", {
-                required: "Rating is required",
-                valueAsNumber: true,
-                min: { value: 0, message: "Rating must be between 0 and 5" },
-                max: { value: 5, message: "Rating must be between 0 and 5" },
-              })}
-            />
-            {errors.rating && <p className="text-sm text-red-500">{errors.rating.message}</p>}
-          </div> */}
 
           {/* Image Upload Section - Full Width */}
           <div className="space-y-2 md:col-span-2">
@@ -525,24 +503,22 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
             <Label htmlFor="isQP">Is this a QP Flower product?</Label>
           </div>
 
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="description">
-              Description (Optional)
-              {/* <span className="text-red-500"> *</span> */}
-            </Label>
-            <Textarea
-              id="description"
-              {...register("description", {
-                // required: "Description is required",
-                // validate: value => value?.trim() ? true : "Description cannot be empty"
-              })}
+          {/* Sale Checkbox */}
+          <div className="flex items-center space-x-2">
+            <Controller
+              name="isOnSale"
+              control={control}
+              render={({ field }) => (
+                <input
+                  type="checkbox"
+                  id="isOnSale"
+                  checked={field.value}
+                  onChange={field.onChange}
+                  className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                />
+              )}
             />
-            {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
-          </div>
-
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="nose">Nose (Optional)</Label>
-            <Textarea id="nose" {...register("nose")} />
+            <Label htmlFor="isOnSale">Is this item on sale?</Label>
           </div>
 
           {/* Conditionally show QP price field */}
@@ -565,6 +541,47 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
               {errors.qpPrice && <p className="text-sm text-red-500">{errors.qpPrice.message}</p>}
             </div>
           )}
+
+          {/* Conditionally show sale price field */}
+          {isOnSaleChecked && (
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="salePrice">
+                Sale Price ($) <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="salePrice"
+                type="number"
+                step="0.01"
+                min="0.01"
+                {...register("salePrice", {
+                  required: isOnSaleChecked ? "Sale price is required when item is on sale" : false,
+                  valueAsNumber: true,
+                  min: { value: 0.01, message: "Sale price must be greater than 0" },
+                })}
+                placeholder="Enter the discounted price"
+              />
+              {errors.salePrice && <p className="text-sm text-red-500">{errors.salePrice.message}</p>}
+              <p className="text-sm text-gray-500">
+                This price will be displayed instead of the regular price when the item is on sale.
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="description">
+              Description (Optional)
+            </Label>
+            <Textarea
+              id="description"
+              {...register("description")}
+            />
+            {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="nose">Nose (Optional)</Label>
+            <Textarea id="nose" {...register("nose")} />
+          </div>
         </div>
 
         <div className="flex justify-end">

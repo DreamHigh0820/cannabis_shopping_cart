@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Leaf, Star } from "lucide-react"
+import { Leaf, Star, Tag } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useCart } from "@/lib/cart-context"
 import ProductImage from "@/components/ProductImage"
@@ -24,6 +24,8 @@ interface Product {
   isQP?: boolean
   qpPrice?: number
   featured?: boolean
+  isOnSale?: boolean
+  salePrice?: number
 }
 
 interface BlogPost {
@@ -45,7 +47,16 @@ export default function HomePage() {
 
   const addToCart = (product: Product) => {
     const isQPProduct = product.isQP && product.qpPrice
-    const effectivePrice = isQPProduct ? product.qpPrice : product.price
+    let effectivePrice: number
+
+    if (isQPProduct) {
+      // For QP products, use sale price if on sale, otherwise use QP price
+      effectivePrice = product.isOnSale && product.salePrice ? product.salePrice : product.qpPrice!
+    } else {
+      // For regular products, use sale price if on sale, otherwise use regular price
+      effectivePrice = product.isOnSale && product.salePrice ? product.salePrice : product.price
+    }
+
     const unit = isQPProduct ? 'QP' : 'LB'
 
     cartDispatch({
@@ -54,18 +65,64 @@ export default function HomePage() {
         id: product._id,
         name: product.name,
         category: product.category,
-        price: effectivePrice, // Use effective price based on unit type
+        price: effectivePrice, // Use effective price based on unit type and sale status
         image: product.image,
         quantity: 1,
         isQP: isQPProduct,
         qpPrice: product.qpPrice,
         unit: unit, // Add unit information
+        isOnSale: product.isOnSale,
+        salePrice: product.salePrice,
       },
     })
     console.log("product.category", product.category)
     const unitText = isQPProduct ? "QP" : product.category === 'Vape' || product.category === 'Edible' ? "PC" : "LB"
     setNotification(`${product.name} (1 ${unitText}) added to cart!`)
     setTimeout(() => setNotification(null), 3000)
+  }
+
+  // Helper function to render price with sale styling
+  const renderPrice = (product: Product) => {
+    const unit = (product.category === 'Vape' || product.category === 'Edible') ? 'PC:' : 'LB:'
+    const isOnSale = product.isOnSale && product.salePrice
+    const isQP = product.isQP && product.qpPrice
+
+    return (
+      <div className="flex flex-col justify-center align-bottom">
+        {isOnSale ? (
+          <>
+            {isQP && <div className="flex flex-col">
+              <span className="text-sm sm:text-md font-bold text-red-600">
+                QP: ${product.qpPrice}
+              </span>
+            </div>}
+            <div className="flex flex-col">
+              <span className="text-lg sm:text-xl font-bold text-red-600">
+                {unit} ${product.salePrice}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm sm:text-md font-bold line-through text-red-600">
+                {unit} ${product.price}
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            {isQP && <div className="flex flex-col">
+              <span className="text-sm sm:text-md font-bold text-red-600">
+                QP: ${product.qpPrice}
+              </span>
+            </div>}
+            <div className="flex flex-col">
+              <span className="text-lg sm:text-xl font-bold text-red-600">
+                {unit} ${product.price}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -203,7 +260,7 @@ export default function HomePage() {
           {featuredProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {featuredProducts.map((product) => (
-                <Card key={product._id} className="hover:shadow-lg transition-shadow h-auto">
+                <Card key={product._id} className="hover:shadow-lg transition-shadow h-auto flex flex-col">
                   <CardHeader className="p-0">
                     <ProductMediaDisplay
                       product={product}
@@ -212,49 +269,48 @@ export default function HomePage() {
                       imageHeight={144}
                     />
                   </CardHeader>
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 flex flex-col flex-grow">
                     <div className="flex justify-between items-start mb-2">
-                      <Badge variant="secondary" className="mb-2 capitalize">
-                        {product.category}
-                      </Badge>
-                      {/* <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm text-gray-600 ml-1">{product.rating || 4.0}</span>
-                      </div> */}
-                      {product.featured && <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      </div>}
+                      <div className="flex gap-2">
+                        <Badge variant="secondary" className="mb-2 capitalize">
+                          {product.category}
+                        </Badge>
+                        {product.isOnSale && (
+                          <Badge variant="destructive" className="mb-2 flex items-center gap-1">
+                            <Tag className="h-3 w-3" />
+                            Sale
+                          </Badge>
+                        )}
+                      </div>
+                      {product.featured && (
+                        <div className="flex items-center">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        </div>
+                      )}
                     </div>
                     <h3 className="font-semibold mb-2">{product.name}</h3>
                     <p className="text-sm text-gray-600 mb-4 min-h-16 line-clamp-3">
                       {product.description}
                     </p>
-                    <div className="flex justify-between items-center mb-3">
-                      <div className="flex flex-col">
-                        {product.isQP && product.qpPrice ? (
-                            <span className="text-lg font-bold text-red-600">
-                              ${product.qpPrice}/QP
-                            </span>
-                        ) : (product.category === 'Vape' || product.category === 'Edible') ? (
-                          <span className="text-lg font-bold text-red-600">
-                            ${product.price}/PC
-                          </span>
-                        ) : (
-                          <span className="text-lg font-bold text-red-600">
-                            ${product.price}/LB
-                          </span>
-                        )
-                        }
+
+                    {/* Fixed height pricing section */}
+                    <div className="flex justify-between items-end align-bottom mb-3 flex-grow">
+                      <div className="flex flex-col justify-center align-bottom">
+                        {renderPrice(product)}
                       </div>
-                      {product.isQP && (
-                        <Badge variant="outline" className="text-xs">
-                          QP Deal
-                        </Badge>
-                      )}
+                      <div className="flex gap-2">
+                        {product.isQP && (
+                          <Badge variant="outline" className="text-xs">
+                            QP Deal
+                          </Badge>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Add to Cart button at bottom */}
                     <Button
                       size="sm"
-                      className="w-full bg-red-600 hover:bg-red-700"
+                      className="w-full bg-red-600 hover:bg-red-700 mt-auto"
                       onClick={() => addToCart(product)}
                     >
                       Add to Cart

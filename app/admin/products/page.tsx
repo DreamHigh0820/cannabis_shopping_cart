@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX, Search, Filter, X } from "lucide-react"
+import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX, Search, Filter, X, Tag } from "lucide-react"
 import ProductImage from "@/components/ProductImage"
 import type { Product } from "@/lib/models/Product"
 import BackButton from "../../../components/BackButton"
@@ -19,6 +19,7 @@ interface FilterState {
   qp: string
   inStock: string
   hasMedia: string
+  onSale: string
 }
 
 export default function AdminProductsPage() {
@@ -31,7 +32,8 @@ export default function AdminProductsPage() {
     featured: "all",
     qp: "all",
     inStock: "all",
-    hasMedia: "all"
+    hasMedia: "all",
+    onSale: "all"
   })
   const [sortBy, setSortBy] = useState("name")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
@@ -100,7 +102,12 @@ export default function AdminProductsPage() {
         (filters.hasMedia === "yes" && product.media) ||
         (filters.hasMedia === "no" && !product.media)
 
-      return matchesSearch && matchesCategory && matchesFeatured && matchesQP && matchesStock && matchesMedia
+      // Sale filter
+      const matchesSale = filters.onSale === "all" ||
+        (filters.onSale === "yes" && product.isOnSale) ||
+        (filters.onSale === "no" && !product.isOnSale)
+
+      return matchesSearch && matchesCategory && matchesFeatured && matchesQP && matchesStock && matchesMedia && matchesSale
     })
 
     // Sort products
@@ -132,6 +139,10 @@ export default function AdminProductsPage() {
           aValue = a.featured ? 1 : 0
           bValue = b.featured ? 1 : 0
           break
+        case "salePrice":
+          aValue = a.salePrice || 0
+          bValue = b.salePrice || 0
+          break
         default:
           aValue = a.name.toLowerCase()
           bValue = b.name.toLowerCase()
@@ -156,7 +167,8 @@ export default function AdminProductsPage() {
       featured: "all",
       qp: "all",
       inStock: "all",
-      hasMedia: "all"
+      hasMedia: "all",
+      onSale: "all"
     })
     setSortBy("name")
     setSortOrder("asc")
@@ -245,8 +257,37 @@ export default function AdminProductsPage() {
     return fileName.length > 15 ? fileName.substring(0, 15) + "..." : fileName
   }
 
+  // Helper function to render price with sale styling
+  const renderPrice = (product: Product, className: string = "") => {
+    if (product.isOnSale && product.salePrice) {
+      return (
+        <div className={`${className}`}>
+          <div className="flex flex-col">
+            <span className="text-gray-500 line-through text-sm">${product.price.toFixed(2)}</span>
+            <span className="text-red-600 font-bold">${product.salePrice.toFixed(2)}</span>
+          </div>
+          <span className="text-xs text-gray-500">
+            {(product.category === 'Vape' || product.category === 'Edible') ? '/PC' : '/LB'}
+          </span>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div className={`${className}`}>
+          <div className="flex flex-col">
+            <span className="text-sm">${product.price.toFixed(2)}</span>
+          </div>
+          <span className="text-xs">
+            {(product.category === 'Vape' || product.category === 'Edible') ? '/PC' : '/LB'}
+          </span>
+        </div>
+      )
+    }
+  }
+
   return (
-    <div className="max-w-7xl min-h-screen mx-auto py-8">
+    <div className="max-w-[1440px] min-h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <BackButton to="/admin" />
       <div className="flex sm:flex-row flex-col justify-between sm:items-center gap-y-4 mb-6">
         <h1 className="text-2xl font-bold">Product Management</h1>
@@ -281,20 +322,17 @@ export default function AdminProductsPage() {
           </div>
 
           {/* Filter Controls */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
             <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="flower">Flower</SelectItem>
-                  <SelectItem value="vape">Vape</SelectItem>
-                  <SelectItem value="edible">Edible</SelectItem>
-                  <SelectItem value="concentrate">Concentrate</SelectItem>
-                </SelectContent>
+                <SelectItem value="Flower">Flower</SelectItem>
+                <SelectItem value="Vape">Vape</SelectItem>
+                <SelectItem value="Edible">Edible</SelectItem>
+                <SelectItem value="Concentrate">Concentrate</SelectItem>
               </SelectContent>
             </Select>
 
@@ -317,6 +355,17 @@ export default function AdminProductsPage() {
                 <SelectItem value="all">All Products</SelectItem>
                 <SelectItem value="yes">QP Products</SelectItem>
                 <SelectItem value="no">Non-QP Products</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.onSale} onValueChange={(value) => handleFilterChange("onSale", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="On Sale" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Products</SelectItem>
+                <SelectItem value="yes">On Sale</SelectItem>
+                <SelectItem value="no">Not On Sale</SelectItem>
               </SelectContent>
             </Select>
 
@@ -355,6 +404,8 @@ export default function AdminProductsPage() {
                 <SelectItem value="name-desc">Name (Z-A)</SelectItem>
                 <SelectItem value="price-asc">Price (Low to High)</SelectItem>
                 <SelectItem value="price-desc">Price (High to Low)</SelectItem>
+                <SelectItem value="salePrice-asc">Sale Price (Low to High)</SelectItem>
+                <SelectItem value="salePrice-desc">Sale Price (High to Low)</SelectItem>
                 <SelectItem value="quantity-asc">Stock (Low to High)</SelectItem>
                 <SelectItem value="quantity-desc">Stock (High to Low)</SelectItem>
                 <SelectItem value="category-asc">Category (A-Z)</SelectItem>
@@ -424,11 +475,12 @@ export default function AdminProductsPage() {
                       <TableHead className="w-24">Code</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead className="w-24">Category</TableHead>
-                      <TableHead className="w-24">Price</TableHead>
+                      <TableHead className="w-32">Price</TableHead>
                       <TableHead className="w-20">Cost</TableHead>
                       <TableHead className="w-20">Stock</TableHead>
                       <TableHead className="w-16 text-center">QP</TableHead>
                       <TableHead className="w-24">QP Price</TableHead>
+                      <TableHead className="w-20 text-center">Sale</TableHead>
                       <TableHead className="w-20 text-center">Featured</TableHead>
                       <TableHead className="w-36 text-center">Actions</TableHead>
                     </TableRow>
@@ -461,8 +513,7 @@ export default function AdminProductsPage() {
                         <TableCell className="font-medium">{product.name}</TableCell>
                         <TableCell className="capitalize">{product.category}</TableCell>
                         <TableCell>
-                          ${product.price.toFixed(2)}
-                          {<span className="text-xs text-gray-500">{(product.category === 'Vape' || product.category === 'Edible') ? '/PC' : '/LB'}</span>}
+                          {renderPrice(product)}
                         </TableCell>
                         <TableCell>${product.cost?.toFixed(2) || "N/A"}</TableCell>
                         <TableCell>
@@ -476,14 +527,21 @@ export default function AdminProductsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {product.qpPrice ? (
-                            <span>
-                              ${product.qpPrice.toFixed(2)}
-                              <span className="text-xs text-gray-500">/QP</span>
-                            </span>
+                          { (product.isQP && product.qpPrice) ?
+                              (<div className="flex flex-col">
+                                <span className="text-sm">
+                                  ${product.qpPrice.toFixed(2)}
+                                  <span className="text-xs">/QP</span>
+                                </span>
+                              </div>
                           ) : (
                             "N/A"
                           )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={product.isOnSale ? "destructive" : "secondary"} className="text-xs">
+                            {product.isOnSale ? "Yes" : "No"}
+                          </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-center">
@@ -548,7 +606,7 @@ export default function AdminProductsPage() {
                             <div>
                               <h3 className="font-medium text-base truncate">{product.name}</h3>
                               <div className="flex flex-wrap gap-2 mt-1">
-                                <Badge variant="outline" className="text-xs">{product.code}</Badge>
+                                {product.code && <Badge variant="outline" className="text-xs">{product.code}</Badge>}
                                 <Badge variant="secondary" className="text-xs capitalize">{product.category}</Badge>
                               </div>
                             </div>
@@ -558,6 +616,12 @@ export default function AdminProductsPage() {
                               )}
                               {product.isQP && (
                                 <Badge variant="default" className="text-xs">QP</Badge>
+                              )}
+                              {product.isOnSale && (
+                                <Badge variant="destructive" className="text-xs flex items-center gap-1">
+                                  <Tag className="h-3 w-3" />
+                                  Sale
+                                </Badge>
                               )}
                             </div>
                           </div>
@@ -576,23 +640,52 @@ export default function AdminProductsPage() {
                           <div className="grid grid-cols-2 gap-2 text-sm mb-3">
                             <div>
                               <span className="text-gray-500">Price: </span>
-                              <span className="font-medium">
-                                ${product.price.toFixed(2)}
-                                {!product.isQP && <span className="text-xs text-gray-500">{(product.category === 'Vape' || product.category === 'Edible') ? '/PC' : '/LB'}</span>}
-                              </span>
+                              {product.isQP ? (
+                                // For QP products, always show regular LB price (no sale styling)
+                                <span className="font-medium">${product.price.toFixed(2)}/LB</span>
+                              ) : (
+                                // For non-QP products, show sale styling on price
+                                product.isOnSale && product.salePrice ? (
+                                  <div className="flex flex-col">
+                                    <span className="text-gray-500 line-through text-sm">
+                                      ${product.price.toFixed(2)}/{(product.category === 'Vape' || product.category === 'Edible') ? 'PC' : 'LB'}
+                                    </span>
+                                    <span className="text-red-600 font-bold">
+                                      ${product.salePrice.toFixed(2)}/{(product.category === 'Vape' || product.category === 'Edible') ? 'PC' : 'LB'}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="font-medium">
+                                    ${product.price.toFixed(2)}/{(product.category === 'Vape' || product.category === 'Edible') ? 'PC' : 'LB'}
+                                  </span>
+                                )
+                              )}
                             </div>
                             <div>
                               <span className="text-gray-500">Stock: </span>
-                              <span className={`font-medium ${product.quantity === 0 ? "text-red-500" : ""}`}>
-                                {product.quantity}
+                              <span className={product.quantity === 0 || product.quantity === null ? "text-red-500 font-medium" : ""}>
+                                {product.quantity === null ? '0' : product.quantity}
                               </span>
                             </div>
-                            {product.qpPrice && (
-                              <div>
-                                <span className="text-gray-500">QP Price: </span>
-                                <span className="font-medium">${product.qpPrice.toFixed(2)}/QP</span>
-                              </div>
-                            )}
+                            <div>
+                              <span className="text-gray-500">QP Price: </span>
+                              {product.qpPrice ? (
+                                product.isQP && product.isOnSale && product.salePrice ? (
+                                  <div className="flex flex-col">
+                                    <span className="text-gray-500 line-through text-sm">
+                                      ${product.qpPrice.toFixed(2)}/QP
+                                    </span>
+                                    <span className="text-red-600 font-bold">
+                                      ${product.salePrice.toFixed(2)}/QP
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <span className="font-medium">${product.qpPrice.toFixed(2)}/QP</span>
+                                )
+                              ) : (
+                                <span className="font-medium">N/A</span>
+                              )}
+                            </div>
                             <div>
                               <span className="text-gray-500">Cost: </span>
                               <span className="font-medium">${product.cost?.toFixed(2) || "N/A"}</span>

@@ -4,10 +4,8 @@ import type { AdminSession } from "./models/Admin"
 
 export async function verifyAdminAuth(request: NextRequest): Promise<AdminSession | null> {
   const allCookies = request.cookies.getAll()
-  console.log("All cookies in middleware:", allCookies)
 
   const token = request.cookies.get("admin_token")?.value
-  console.log("admin_token in middleware:", token)
 
   if (!token) {
     return null

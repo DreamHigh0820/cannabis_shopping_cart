@@ -11,13 +11,15 @@ export interface Product {
   media: string // Required media field for videos/audio
   description: string
   nose?: string
-  strain: "Indica" | "Sativa" | "Hybrid"
+  strain: "Indica" | "Sativa" | "Indica-Dominant-Hybrid" | "Sativa-Dominant-Hybrid"
   isQP: boolean
   featured?: boolean
   qpPrice?: number
   rating?: number
   createdAt?: Date
   updatedAt?: Date
+  isOnSale?: boolean
+  salePrice?: number
 }
 
 export interface BlogPost {

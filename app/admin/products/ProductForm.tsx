@@ -23,8 +23,10 @@ type FormData = Omit<Product, "_id" | "createdAt" | "updatedAt">
 export default function ProductForm({ product, isEditing = false }: ProductFormProps) {
   const router = useRouter()
   const [imageUrl, setImageUrl] = useState<string>(product?.image || "")
+  const [image2Url, setImage2Url] = useState<string>(product?.image2 || "")
   const [mediaUrl, setMediaUrl] = useState<string>(product?.media || "")
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null)
+  const [selectedImage2File, setSelectedImage2File] = useState<File | null>(null)
   const [selectedMediaFile, setSelectedMediaFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
@@ -46,6 +48,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       quantity: product?.quantity || 0,
       cost: product?.cost || 0,
       image: product?.image || "",
+      image2: product?.image2 || "",
       media: product?.media || "",
       description: product?.description || "",
       nose: product?.nose || "",
@@ -66,6 +69,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
   useEffect(() => {
     if (product) {
       setImageUrl(product.image || "")
+      setImage2Url(product.image2 || "")
       setMediaUrl(product.media || "")
       reset({
         code: product.code,
@@ -75,6 +79,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         quantity: product.quantity,
         cost: product.cost,
         image: product.image,
+        image2: product.image2,
         media: product.media,
         description: product.description,
         nose: product.nose,
@@ -95,6 +100,11 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
     setValue("image", newImageUrl)
   }
 
+  const handleImage2Change = (newImageUrl: string) => {
+    setImage2Url(newImageUrl)
+    setValue("image2", newImageUrl)
+  }
+
   // Handle media URL changes (for existing media)
   const handleMediaChange = (newMediaUrl: string) => {
     setMediaUrl(newMediaUrl)
@@ -104,6 +114,10 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
   // Handle new file selection (don't upload yet)
   const handleImageFileChange = (file: File | null) => {
     setSelectedImageFile(file)
+  }
+
+  const handleImage2FileChange = (file: File | null) => {
+    setSelectedImage2File(file)
   }
 
   const handleMediaFileChange = (file: File | null) => {
@@ -204,8 +218,10 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
 
     setUploading(true)
     let finalImageUrl = imageUrl || ""
+    let finalImage2Url = image2Url || ""
     let finalMediaUrl = mediaUrl || ""
     let uploadedImageUrl: string | null = null
+    let uploadedImage2Url: string | null = null
     let uploadedMediaUrl: string | null = null
 
     try {
@@ -217,7 +233,15 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         toast.success('Image uploaded successfully!', { id: 'upload-image' })
       }
 
-      // Step 2: Upload media to Vercel Blob if a new file is selected
+      // Step 2: Upload second image to Vercel Blob if a new file is selected
+      if (selectedImage2File) {
+        toast.loading('Uploading second image to Vercel Blob...', { id: 'upload-image2' })
+        uploadedImage2Url = await uploadFile(selectedImage2File)
+        finalImage2Url = uploadedImage2Url
+        toast.success('Second image uploaded successfully!', { id: 'upload-image2' })
+      }
+
+      // Step 3: Upload media to Vercel Blob if a new file is selected
       if (selectedMediaFile) {
         toast.loading('Uploading media to Vercel Blob...', { id: 'upload-media' })
         uploadedMediaUrl = await uploadFile(selectedMediaFile)
@@ -225,14 +249,15 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         toast.success('Media uploaded successfully!', { id: 'upload-media' })
       }
 
-      // Step 3: Prepare product data with final URLs
+      // Step 4: Prepare product data with final URLs
       const submitData = {
         ...data,
         image: finalImageUrl,
+        image2: finalImage2Url,
         media: finalMediaUrl
       }
 
-      // Step 4: Submit product data
+      // Step 5: Submit product data
       const apiEndpoint = isEditing ? `/api/admin/products/${product?._id}` : "/api/admin/products"
       const method = isEditing ? "PUT" : "POST"
 
@@ -251,6 +276,9 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
         if (!isEditing) {
           if (uploadedImageUrl) {
             await deleteUploadedFile(uploadedImageUrl, true)
+          }
+          if (uploadedImage2Url) {
+            await deleteUploadedFile(uploadedImage2Url, true)
           }
           if (uploadedMediaUrl) {
             await deleteUploadedFile(uploadedMediaUrl, false)
@@ -273,6 +301,9 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
       if (!isEditing) {
         if (uploadedImageUrl) {
           await deleteUploadedFile(uploadedImageUrl, true)
+        }
+        if (uploadedImage2Url) {
+          await deleteUploadedFile(uploadedImage2Url, true)
         }
         if (uploadedMediaUrl) {
           await deleteUploadedFile(uploadedMediaUrl, false)
@@ -349,6 +380,7 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
                     <SelectItem value="Vape">Vape</SelectItem>
                     <SelectItem value="Edible">Edible</SelectItem>
                     <SelectItem value="Concentrate">Concentrate</SelectItem>
+                    {/* <SelectItem value="Miscellaneous">Miscellaneous</SelectItem> */}
                   </SelectContent>
                 </Select>
               )}
@@ -434,20 +466,38 @@ export default function ProductForm({ product, isEditing = false }: ProductFormP
             {errors.cost && <p className="text-sm text-red-500">{errors.cost.message}</p>}
           </div>
 
-          {/* Image Upload Section - Full Width */}
+          {/* Primary Image Upload Section - Full Width */}
           <div className="space-y-2 md:col-span-2">
             <ImageUpload
               currentImage={imageUrl}
               onImageChange={handleImageChange}
               onFileChange={handleImageFileChange}
-              label="Product Image"
+              label="Primary Product Image"
               required={!isEditing}
               uploading={uploading}
             />
 
             {selectedImageFile && (
               <p className="text-sm text-blue-600">
-                ✓ New image selected: {selectedImageFile.name} (will be uploaded to Vercel Blob when you save)
+                ✓ New primary image selected: {selectedImageFile.name} (will be uploaded to Vercel Blob when you save)
+              </p>
+            )}
+          </div>
+
+          {/* Second Image Upload Section - Full Width */}
+          <div className="space-y-2 md:col-span-2">
+            <ImageUpload
+              currentImage={image2Url}
+              onImageChange={handleImage2Change}
+              onFileChange={handleImage2FileChange}
+              label="Second Product Image (Optional)"
+              required={false}
+              uploading={uploading}
+            />
+
+            {selectedImage2File && (
+              <p className="text-sm text-blue-600">
+                ✓ New second image selected: {selectedImage2File.name} (will be uploaded to Vercel Blob when you save)
               </p>
             )}
           </div>

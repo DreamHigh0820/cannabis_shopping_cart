@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX, Search, Filter, X, Tag } from "lucide-react"
+import { PlusCircle, Edit, Trash2, Loader2, Star, Trash, Video, Music, FileX, Search, Filter, X, Tag, Image as ImageIcon } from "lucide-react"
 import ProductImage from "@/components/ProductImage"
 import type { Product } from "@/lib/models/Product"
 import BackButton from "../../../components/BackButton"
@@ -20,6 +20,7 @@ interface FilterState {
   inStock: string
   hasMedia: string
   onSale: string
+  hasSecondImage: string
 }
 
 export default function AdminProductsPage() {
@@ -33,7 +34,8 @@ export default function AdminProductsPage() {
     qp: "all",
     inStock: "all",
     hasMedia: "all",
-    onSale: "all"
+    onSale: "all",
+    hasSecondImage: "all"
   })
   const [sortBy, setSortBy] = useState("name")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
@@ -107,7 +109,12 @@ export default function AdminProductsPage() {
         (filters.onSale === "yes" && product.isOnSale) ||
         (filters.onSale === "no" && !product.isOnSale)
 
-      return matchesSearch && matchesCategory && matchesFeatured && matchesQP && matchesStock && matchesMedia && matchesSale
+      // Second image filter
+      const matchesSecondImage = filters.hasSecondImage === "all" ||
+        (filters.hasSecondImage === "yes" && product.image2) ||
+        (filters.hasSecondImage === "no" && !product.image2)
+
+      return matchesSearch && matchesCategory && matchesFeatured && matchesQP && matchesStock && matchesMedia && matchesSale && matchesSecondImage
     })
 
     // Sort products
@@ -168,7 +175,8 @@ export default function AdminProductsPage() {
       qp: "all",
       inStock: "all",
       hasMedia: "all",
-      onSale: "all"
+      onSale: "all",
+      hasSecondImage: "all"
     })
     setSortBy("name")
     setSortOrder("asc")
@@ -322,7 +330,7 @@ export default function AdminProductsPage() {
           </div>
 
           {/* Filter Controls */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
             <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
               <SelectTrigger>
                 <SelectValue placeholder="Category" />
@@ -333,6 +341,7 @@ export default function AdminProductsPage() {
                 <SelectItem value="Vape">Vape</SelectItem>
                 <SelectItem value="Edible">Edible</SelectItem>
                 <SelectItem value="Concentrate">Concentrate</SelectItem>
+                {/* <SelectItem value="Miscellaneous">Miscellaneous</SelectItem> */}
               </SelectContent>
             </Select>
 
@@ -388,6 +397,17 @@ export default function AdminProductsPage() {
                 <SelectItem value="all">All Products</SelectItem>
                 <SelectItem value="yes">Has Media</SelectItem>
                 <SelectItem value="no">No Media</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.hasSecondImage} onValueChange={(value) => handleFilterChange("hasSecondImage", value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Second Image" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Products</SelectItem>
+                <SelectItem value="yes">Has Second Image</SelectItem>
+                <SelectItem value="no">No Second Image</SelectItem>
               </SelectContent>
             </Select>
 
@@ -466,29 +486,30 @@ export default function AdminProductsPage() {
           ) : (
             <>
               {/* Desktop Table View */}
-              <div className="hidden lg:block overflow-x-auto">
+              <div className="hidden lg:block overflow-x-auto text-center">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-16">Image</TableHead>
-                      <TableHead className="w-20">Media</TableHead>
-                      <TableHead className="w-24">Code</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead className="w-24">Category</TableHead>
-                      <TableHead className="w-32">Price</TableHead>
-                      <TableHead className="w-20">Cost</TableHead>
-                      <TableHead className="w-20">Stock</TableHead>
-                      <TableHead className="w-16 text-center">QP</TableHead>
-                      <TableHead className="w-24">QP Price</TableHead>
-                      <TableHead className="w-20 text-center">Sale</TableHead>
-                      <TableHead className="w-20 text-center">Featured</TableHead>
-                      <TableHead className="w-36 text-center">Actions</TableHead>
+                      <TableHead className="w-16 px-2 text-center">Image</TableHead>
+                      <TableHead className="w-16 px-2 text-center">Image2</TableHead>
+                      <TableHead className="w-20 px-2 text-center">Media</TableHead>
+                      <TableHead className="w-24 px-2 text-center">Code</TableHead>
+                      <TableHead className="w-24 px-2 text-center">Name</TableHead>
+                      <TableHead className="w-24 px-2 text-center">Category</TableHead>
+                      <TableHead className="w-32 px-2 text-center">Price</TableHead>
+                      <TableHead className="w-20 px-2 text-center">Cost</TableHead>
+                      <TableHead className="w-20 px-2 text-center">Stock</TableHead>
+                      <TableHead className="w-16 px-2 text-center">QP</TableHead>
+                      <TableHead className="w-24 px-2 text-center">QP Price</TableHead>
+                      <TableHead className="w-20 px-2 text-center">Sale</TableHead>
+                      <TableHead className="w-20 px-2 text-center">Featured</TableHead>
+                      <TableHead className="w-36 px-2 text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredProducts.map((product) => (
                       <TableRow key={product._id}>
-                        <TableCell>
+                        <TableCell className="px-2">
                           <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-gray-100">
                             <ProductImage
                               src={product.image}
@@ -499,7 +520,24 @@ export default function AdminProductsPage() {
                             />
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2">
+                          <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-gray-100">
+                            {product.image2 ? (
+                              <ProductImage
+                                src={product.image2}
+                                alt={`${product.name} - Image 2`}
+                                width={48}
+                                height={48}
+                                className="object-cover w-full h-full"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <ImageIcon className="h-6 w-6 text-gray-300" />
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-2">
                           <div className="flex flex-col items-center gap-1">
                             {getMediaIcon(product.media)}
                             <span className="text-xs text-gray-500">
@@ -507,26 +545,26 @@ export default function AdminProductsPage() {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2">
                           <Badge variant="outline" className="text-xs">{product.code ? (product.code) : ("N/A")}</Badge>
                         </TableCell>
-                        <TableCell className="font-medium">{product.name}</TableCell>
-                        <TableCell className="capitalize">{product.category}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-medium px-2">{product.name}</TableCell>
+                        <TableCell className="capitalize px-2">{product.category}</TableCell>
+                        <TableCell className="px-2">
                           {renderPrice(product)}
                         </TableCell>
                         <TableCell>${product.cost?.toFixed(2) || "N/A"}</TableCell>
-                        <TableCell>
+                        <TableCell className="px-2">
                           <span className={product.quantity === 0 || product.quantity === null ? "text-red-500 font-medium" : ""}>
                             {product.quantity === null ? '0' : product.quantity}
                           </span>
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="text-center px-2">
                           <Badge variant={product.isQP ? "default" : "secondary"} className="text-xs">
                             {product.isQP ? "Yes" : "No"}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2">
                           {(product.isQP && product.qpPrice) ?
                             (<div className="flex flex-col">
                               <span className="text-sm">
@@ -538,19 +576,19 @@ export default function AdminProductsPage() {
                               "N/A"
                             )}
                         </TableCell>
-                        <TableCell className="text-center">
+                        <TableCell className="text-center px-2">
                           <Badge variant={product.isOnSale ? "destructive" : "secondary"} className="text-xs">
                             {product.isOnSale ? "Yes" : "No"}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2">
                           <div className="flex justify-center">
                             <Badge variant={product.featured ? "default" : "secondary"} className="text-xs">
                               {product.featured ? "Yes" : "No"}
                             </Badge>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-2">
                           <div className="flex items-center justify-center gap-1">
                             <Button
                               variant={product.featured ? "default" : "outline"}
@@ -589,15 +627,28 @@ export default function AdminProductsPage() {
                   <Card key={product._id} className="border">
                     <CardContent className="p-4">
                       <div className="flex gap-4">
-                        {/* Product Image */}
-                        <div className="w-16 h-16 relative rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                          <ProductImage
-                            src={product.image}
-                            alt={product.name}
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full"
-                          />
+                        {/* Product Images */}
+                        <div className="flex gap-2 flex-shrink-0">
+                          <div className="w-16 h-16 relative rounded-lg overflow-hidden bg-gray-100">
+                            <ProductImage
+                              src={product.image}
+                              alt={product.name}
+                              width={64}
+                              height={64}
+                              className="object-cover w-full h-full"
+                            />
+                          </div>
+                          {product.image2 && (
+                            <div className="w-16 h-16 relative rounded-lg overflow-hidden bg-gray-100">
+                              <ProductImage
+                                src={product.image2}
+                                alt={`${product.name} - Image 2`}
+                                width={64}
+                                height={64}
+                                className="object-cover w-full h-full"
+                              />
+                            </div>
+                          )}
                         </div>
 
                         {/* Product Info */}
@@ -608,15 +659,13 @@ export default function AdminProductsPage() {
                               <div className="flex flex-wrap gap-2 mt-1">
                                 {product.code && <Badge variant="outline" className="text-xs">{product.code}</Badge>}
                                 <Badge variant="secondary" className="text-xs capitalize">{product.category}</Badge>
+                                {product.image2 && <Badge variant="outline" className="text-xs">+2nd Image</Badge>}
                               </div>
                             </div>
                             <div className="flex flex-col gap-1 ml-2">
-                              {/* {product.featured && (
-                                <Badge className="bg-yellow-500 text-white text-xs">Featured</Badge>
-                              )} */}
                               {product.nose && (
                                 <div className="flex items-center">
-                                  <span className="text-red-600 font-bold text-sm">👃 {product.nose}</span>
+                                  <span className="text-red-600 text-nowrap font-bold text-sm">👃 {product.nose}</span>
                                 </div>
                               )}
                               {product.isQP && (
@@ -728,6 +777,44 @@ export default function AdminProductsPage() {
               </div>
             </>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Cleanup Button */}
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Trash className="h-5 w-5" />
+            Maintenance
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium">Cleanup Unused Images</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Remove images and media files that are no longer associated with any products
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleCleanupImages}
+              disabled={cleaningUp}
+              className="ml-4"
+            >
+              {cleaningUp ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Cleaning...
+                </>
+              ) : (
+                <>
+                  <Trash className="mr-2 h-4 w-4" />
+                  Cleanup Images
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

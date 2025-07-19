@@ -20,6 +20,8 @@ interface Product {
   category: string
   price: number
   image: string
+  image2?: string
+  media?: string
   rating?: number
   description: string
   strain?: string
@@ -181,6 +183,7 @@ export default function MenuPage() {
                   <SelectItem value="vape">Vape</SelectItem>
                   <SelectItem value="edible">Edible</SelectItem>
                   <SelectItem value="concentrate">Concentrate</SelectItem>
+                  {/* <SelectItem value="miscellaneous">Miscellaneous</SelectItem> */}
                 </SelectContent>
               </Select>
             </div>
@@ -261,15 +264,15 @@ export default function MenuPage() {
                           Sale
                         </Badge>
                       )}
+                      {/* {product.image2 && (
+                        <Badge variant="outline" className="mb-2 text-xs">
+                          +Image
+                        </Badge>
+                      )} */}
                     </div>
-                    {/* {product.featured && (
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      </div>
-                    )} */}
                     {product.nose && (
                       <div className="flex items-center">
-                        <span className="text-red-600 font-bold text-sm">👃 {product.nose}</span>
+                        <span className="text-red-600 text-nowrap font-bold text-sm">👃 {product.nose}</span>
                       </div>
                     )}
                   </div>

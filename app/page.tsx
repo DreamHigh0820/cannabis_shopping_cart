@@ -18,6 +18,8 @@ interface Product {
   category: string
   price: number
   image: string
+  image2?: string
+  media?: string
   rating?: number
   description: string
   strain?: string
@@ -230,12 +232,13 @@ export default function HomePage() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">Shop by Category</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {[
               { name: "Flower", icon: "🌸", description: "Premium indoor & outdoor strains" },
               { name: "Vape", icon: "💨", description: "Cartridges & disposable pens" },
               { name: "Edible", icon: "🍯", description: "Gummies, chocolates & more" },
               { name: "Concentrate", icon: "💎", description: "Concentrates & live rosin" },
+              // { name: "Miscellaneous", icon: "🛍️", description: "Clothing & merchandise" },
             ].map((category, index) => (
               <Link href={`/menu?category=${category.name.toLowerCase()}`} key={index}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
@@ -272,7 +275,7 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="p-4 flex flex-col flex-grow">
                     <div className="flex justify-between items-start mb-2">
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <Badge variant="secondary" className="mb-2 capitalize">
                           {product.category}
                         </Badge>
@@ -282,15 +285,15 @@ export default function HomePage() {
                             Sale
                           </Badge>
                         )}
+                        {product.image2 && (
+                          <Badge variant="outline" className="mb-2 text-xs">
+                            +Image
+                          </Badge>
+                        )}
                       </div>
-                      {/* {product.featured && (
-                        <div className="flex items-center">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        </div>
-                      )} */}
                       {product.nose && (
-                        <div className="flex items-center">
-                          <span className="text-red-600 font-bold text-sm">👃 {product.nose}</span>
+                        <div className="flex text-nowrap items-center">
+                          <span className="text-red-600 text-nowrap font-bold text-sm">👃 {product.nose}</span>
                         </div>
                       )}
                     </div>

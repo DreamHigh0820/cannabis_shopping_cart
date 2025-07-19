@@ -55,7 +55,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   try {
     const body = await request.json()
     
-    // Get the current product to check if image or media is being changed
+    // Get the current product to check if images or media are being changed
     const currentProduct = await getProductById(params.id)
     
     if (!currentProduct) {
@@ -65,10 +65,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       )
     }
     
-    // Check if image is being updated
+    // Check if primary image is being updated
     const oldImageUrl = currentProduct.image
     const newImageUrl = body.image
     const imageChanged = oldImageUrl !== newImageUrl
+    
+    // Check if second image is being updated
+    const oldImage2Url = currentProduct.image2
+    const newImage2Url = body.image2
+    const image2Changed = oldImage2Url !== newImage2Url
     
     // Check if media is being updated
     const oldMediaUrl = currentProduct.media
@@ -87,17 +92,29 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     
     // Delete old files if they were changed and old files exist
     let oldImageDeleted = true
+    let oldImage2Deleted = true
     let oldMediaDeleted = true
     let deletionMessages: string[] = []
     
     if (imageChanged && oldImageUrl) {
-      console.log('Image changed, deleting old image:', oldImageUrl)
+      console.log('Primary image changed, deleting old image:', oldImageUrl)
       oldImageDeleted = await deleteFileFromBlob(oldImageUrl)
       if (!oldImageDeleted) {
-        console.warn('Failed to delete old image:', oldImageUrl)
-        deletionMessages.push("old image deletion failed")
+        console.warn('Failed to delete old primary image:', oldImageUrl)
+        deletionMessages.push("old primary image deletion failed")
       } else {
-        deletionMessages.push("old image removed")
+        deletionMessages.push("old primary image removed")
+      }
+    }
+    
+    if (image2Changed && oldImage2Url) {
+      console.log('Second image changed, deleting old second image:', oldImage2Url)
+      oldImage2Deleted = await deleteFileFromBlob(oldImage2Url)
+      if (!oldImage2Deleted) {
+        console.warn('Failed to delete old second image:', oldImage2Url)
+        deletionMessages.push("old second image deletion failed")
+      } else {
+        deletionMessages.push("old second image removed")
       }
     }
     
@@ -114,7 +131,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     
     // Create appropriate message
     let message = "Product updated"
-    if (imageChanged || mediaChanged) {
+    if (imageChanged || image2Changed || mediaChanged) {
       if (deletionMessages.length > 0) {
         message += " and " + deletionMessages.join(", ")
       }
@@ -125,6 +142,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       product: updatedProduct,
       message,
       oldImageDeleted,
+      oldImage2Deleted,
       oldMediaDeleted
     })
   } catch (error) {
@@ -138,7 +156,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
-    // Get the product first to access the image and media URLs
+    // Get the product first to access the image, image2, and media URLs
     const product = await getProductById(params.id)
     
     if (!product) {
@@ -150,6 +168,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     
     // Store URLs before deletion
     const imageUrl = product.image
+    const image2Url = product.image2
     const mediaUrl = product.media
     
     // Delete the product from database first
@@ -164,17 +183,29 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     
     // Delete associated files
     let imageDeleted = true
+    let image2Deleted = true
     let mediaDeleted = true
     let deletionMessages: string[] = []
     
     if (imageUrl) {
-      console.log('Deleting product image:', imageUrl)
+      console.log('Deleting product primary image:', imageUrl)
       imageDeleted = await deleteFileFromBlob(imageUrl)
       if (!imageDeleted) {
-        console.warn('Failed to delete product image:', imageUrl)
-        deletionMessages.push("image deletion failed")
+        console.warn('Failed to delete product primary image:', imageUrl)
+        deletionMessages.push("primary image deletion failed")
       } else {
-        deletionMessages.push("image deleted")
+        deletionMessages.push("primary image deleted")
+      }
+    }
+    
+    if (image2Url) {
+      console.log('Deleting product second image:', image2Url)
+      image2Deleted = await deleteFileFromBlob(image2Url)
+      if (!image2Deleted) {
+        console.warn('Failed to delete product second image:', image2Url)
+        deletionMessages.push("second image deletion failed")
+      } else {
+        deletionMessages.push("second image deleted")
       }
     }
     
@@ -199,6 +230,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       success: true,
       message,
       imageDeleted,
+      image2Deleted,
       mediaDeleted
     })
   } catch (error) {

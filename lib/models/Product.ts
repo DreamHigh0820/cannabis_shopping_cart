@@ -8,6 +8,7 @@ export interface Product {
   quantity: number
   cost?: number
   image: string
+  image2?: string // Optional second image
   media: string // Required media field for videos/audio
   description: string
   nose?: string

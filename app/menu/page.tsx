@@ -269,7 +269,7 @@ export default function MenuPage() {
                     )} */}
                     {product.nose && (
                       <div className="flex items-center">
-                        <span className="text-red-600 font-bold text-sm">{product.nose}</span>
+                        <span className="text-red-600 font-bold text-sm">👃 {product.nose}</span>
                       </div>
                     )}
                   </div>
